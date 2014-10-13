@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Unperishable</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="default_username_massage">User Name</string>
     <string name="action_settings">Settings</string>
 
 </resources>
