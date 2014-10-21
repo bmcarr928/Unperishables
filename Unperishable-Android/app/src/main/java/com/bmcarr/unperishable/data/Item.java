@@ -1,7 +1,7 @@
-package com.bmcarr.unperishable.unperishable.data;
+package com.bmcarr.unperishable.data;
 
-import com.bmcarr.unperishable.unperishable.data.Config.Category;
-import com.bmcarr.unperishable.unperishable.data.Config.Quantity;
+import com.bmcarr.unperishable.util.Config.Category;
+import com.bmcarr.unperishable.util.Config.Quantity;
 
 import java.sql.Date;
 

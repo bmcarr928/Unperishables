@@ -1,8 +1,9 @@
-package com.bmcarr.unperishable.unperishable;
+package com.bmcarr.unperishable;
 
-import com.bmcarr.unperishable.unperishable.data.Config;
-import com.bmcarr.unperishable.unperishable.data.DataAccess;
-import com.bmcarr.unperishable.unperishable.data.Item;
+import com.bmcarr.unperishable.util.Config;
+import com.bmcarr.unperishable.data.DataAccess;
+import com.bmcarr.unperishable.data.Item;
+import com.bmcarr.unperishable.util.Utilities;
 
 import junit.framework.TestCase;
 
@@ -10,9 +11,7 @@ public class DatabaseTest extends TestCase {
 
     public void testStoringItems() {
 
-        Config.deleteDatabase("testing");
-
-        DataAccess dataAccess = new DataAccess(Config.getContext(), "testing");
+        DataAccess dataAccess = new DataAccess(Utilities.getContext(), "testing");
 
         Item i1 = new Item("Ketchup", Config.Category.REFRIGERATOR, Config.Quantity.STOCKED);
 
@@ -24,7 +23,7 @@ public class DatabaseTest extends TestCase {
 
         assertEquals( "Item name did not match", "Ketchup", i1again.getName() );
 
-        Config.deleteDatabase("testing");
+        Utilities.deleteDatabase("testing");
 
     }
 

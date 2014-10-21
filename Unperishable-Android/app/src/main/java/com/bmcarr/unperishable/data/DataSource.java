@@ -1,8 +1,10 @@
-package com.bmcarr.unperishable.unperishable.data;
+package com.bmcarr.unperishable.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.bmcarr.unperishable.util.Config;
 
 /**
  * Created by bmc on 10/20/14.

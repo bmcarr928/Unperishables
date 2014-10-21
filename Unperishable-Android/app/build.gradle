@@ -5,7 +5,7 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "com.bmcarr.unperishable.unperishable"
+        applicationId "com.bmcarr.unperishable"
         minSdkVersion 15
         targetSdkVersion 20
         versionCode 1

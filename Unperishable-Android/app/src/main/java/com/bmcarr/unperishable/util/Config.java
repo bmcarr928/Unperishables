@@ -1,4 +1,4 @@
-package com.bmcarr.unperishable.unperishable.data;
+package com.bmcarr.unperishable.util;
 
 import android.content.Context;
 import android.util.Log;
@@ -69,38 +69,6 @@ public class Config {
             }
             throw new IllegalArgumentException("Integer " + id + " does not map to a Quantity");
         }
-    }
-
-    /**
-     * Returns the android storage directory
-     * @return A file pointing to the location where the database files are stored
-     */
-    public static Context getContext(Context context) {
-        if( context == null ) {
-            try {
-                final Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
-                final Method method = activityThreadClass.getMethod("currentApplication");
-                context = (Context) method.invoke(null, (Object[]) null);
-                return context;
-            } catch( Exception e ) {
-                Log.e(TAG, "Error while attempting to retrieve current application", e);
-                return null;
-            }
-        } else {
-            return context;
-        }
-    }
-
-    public static Context getContext() {
-        if( Config.context != null ) {
-            return Config.context;
-        } else {
-            return getContext(null);
-        }
-    }
-
-    public static void deleteDatabase(String dbName) {
-        getContext().deleteDatabase(dbName);
     }
 
 
