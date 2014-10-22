@@ -42,9 +42,50 @@ public class DataAccess {
     public ArrayList<Item> queryForAllItems() {
         db.beginTransaction();
         String query = "SELECT * FROM " + Config.ITEM_TABLE_NAME;
-        Cursor queryResult = db.rawQuery(query,null);
+        Cursor queryResult = db.rawQuery(query, null);
         db.endTransaction();
 
+        ArrayList<Item> itemList = getItemsFromCursor(queryResult);
+
+        return itemList;
+    }
+
+    public ArrayList<Item> queryForItemsWithConstraints(String constraint, String... substitutions) {
+        db.beginTransaction();
+        String query = "SELECT * FROM " + Config.ITEM_TABLE_NAME + " WHERE " + constraint;
+        Cursor queryResult = db.rawQuery(query, substitutions);
+        db.endTransaction();
+
+        ArrayList<Item> itemList = getItemsFromCursor(queryResult);
+
+        return itemList;
+    }
+
+    public ArrayList<Item> queryForItemsOfCategory(Config.Category category) {
+        db.beginTransaction();
+        String query = "SELECT * FROM " + Config.ITEM_TABLE_NAME + " WHERE " + Config.ITEM_CATEGORY +
+                " = " + category.getId();
+        Cursor queryResult = db.rawQuery(query, null);
+        db.endTransaction();
+
+        ArrayList<Item> itemList = getItemsFromCursor(queryResult);
+
+        return itemList;
+    }
+
+    public ArrayList<Item> queryForItemsOfQuantity(Config.Quantity quantity) {
+        db.beginTransaction();
+        String query = "SELECT * FROM " + Config.ITEM_TABLE_NAME + " WHERE " + Config.ITEM_QUANTITY +
+                " = " + quantity.getId();
+        Cursor queryResult = db.rawQuery(query, null);
+        db.endTransaction();
+
+        ArrayList<Item> itemList = getItemsFromCursor(queryResult);
+
+        return itemList;
+    }
+
+    private ArrayList<Item> getItemsFromCursor(Cursor queryResult) {
         ArrayList<Item> itemList = new ArrayList<Item>();
 
         if ( queryResult.moveToFirst() && queryResult.getCount() >= 1) {
@@ -69,10 +110,8 @@ public class DataAccess {
                 }
 
                 itemList.add(item);
-                queryResult.moveToNext();
             } while (queryResult.moveToNext());
         }
-
         return itemList;
     }
 
@@ -133,4 +172,9 @@ public class DataAccess {
         }
         return cv;
     }
+
+    public String getLoggedInUser() {
+        return this.loggedInUser;
+    }
+
 }
