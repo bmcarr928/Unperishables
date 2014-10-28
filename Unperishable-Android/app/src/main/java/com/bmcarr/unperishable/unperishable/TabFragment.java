@@ -13,24 +13,25 @@ import android.widget.Button;
  */
 public class TabFragment extends Fragment {
 
-    Fragment invFrag;
-    FragmentTransaction fragTrans;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tab_fragment_layout, container, false);
 
+        Fragment invFrag = new InventoryFragment();
+
+        FragmentTransaction invFragTrans = getFragmentManager().beginTransaction().add(R.id.main_panel, invFrag);
+        invFragTrans.commit();
 
         Button invButton = (Button) view.findViewById(R.id.inventory_button);
 
         invButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                invFrag = new InventoryFragment();
+                Fragment invFrag = new InventoryFragment();
 
-                fragTrans = getFragmentManager().beginTransaction().replace(R.id.main_panel, invFrag);
-                fragTrans.commit();
+                FragmentTransaction invFragTrans = getFragmentManager().beginTransaction().replace(R.id.main_panel, invFrag);
+                invFragTrans.commit();
             }
         });
 
@@ -39,9 +40,9 @@ public class TabFragment extends Fragment {
         shopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                invFrag = new ShoppingListFragment();
-                fragTrans = getFragmentManager().beginTransaction().replace(R.id.main_panel, invFrag);
-                fragTrans.commit();
+                Fragment shoppingFrag = new ShoppingListFragment();
+                FragmentTransaction shoppingFragTrans = getFragmentManager().beginTransaction().replace(R.id.main_panel, shoppingFrag);
+                shoppingFragTrans.commit();
             }
         });
         return view;
