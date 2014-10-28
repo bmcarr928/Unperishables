@@ -6,15 +6,17 @@
     android:orientation="horizontal">
 
     <Button
+        android:id="@+id/inventory_button"
         android:layout_width="wrap_content"
         android:layout_weight="2"
         android:layout_height="@dimen/tabButtonHeight"
-        android:text="Invintory"/>
+        android:text="@string/inventory"/>
 
     <Button
+        android:id="@+id/shopping_list_button"
         android:layout_width="wrap_content"
         android:layout_weight="1"
         android:layout_height="@dimen/tabButtonHeight"
-        android:text="Shopping List"/>
+        android:text="@string/shopping_list"/>
 
 </LinearLayout>
