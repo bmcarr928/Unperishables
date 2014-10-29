@@ -6,7 +6,7 @@ import android.util.Log;
 import java.lang.reflect.Method;
 
 /**
- * Created by bmc on 10/21/14.
+ * Provides miscellaneous utility methods to be used throughout the application
  */
 public class Utilities {
 
@@ -14,11 +14,12 @@ public class Utilities {
     private static Context context;
 
     /**
-     * Returns the android storage directory
-     * @return A file pointing to the location where the database files are stored
+     * Returns the application context when one isn't readily available, as in with testing
+     *
+     * @return A mock context object obtained through reflection
      */
-    public static Context getContext(Context context) {
-        if( context == null ) {
+    public static Context getContext() {
+        if( Utilities.context != null ) {
             try {
                 final Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
                 final Method method = activityThreadClass.getMethod("currentApplication");
@@ -33,14 +34,11 @@ public class Utilities {
         }
     }
 
-    public static Context getContext() {
-        if( Utilities.context != null ) {
-            return Utilities.context;
-        } else {
-            return getContext(null);
-        }
-    }
-
+    /**
+     * Deletes a database from the device's filesystem
+     *
+     * @param dbName Database to be deleted
+     */
     public static void deleteDatabase(String dbName) {
         Log.d(TAG, "Database path: " + getContext().getDatabasePath(dbName));
         getContext().deleteDatabase(dbName);

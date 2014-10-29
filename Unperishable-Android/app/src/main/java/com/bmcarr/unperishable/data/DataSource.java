@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.bmcarr.unperishable.util.Config;
 
 /**
- * Created by bmc on 10/20/14.
+ * This class provides access an upgrade methods to a SQLite database
  */
 public class DataSource extends SQLiteOpenHelper {
 

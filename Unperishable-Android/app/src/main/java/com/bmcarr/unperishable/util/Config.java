@@ -1,14 +1,11 @@
 package com.bmcarr.unperishable.util;
 
-import android.content.Context;
-import android.util.Log;
-
-import java.lang.reflect.Method;
-
+/**
+ * Configuration class that holds constants and enums that will be used in more than one file
+ */
 public class Config {
 
     private static String TAG = "Config";
-    private static Context context;
 
     // Table name
     public static final String ITEM_TABLE_NAME = "kitchen_store";
