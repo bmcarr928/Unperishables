@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryFragment extends Fragment {
-    public final static String ARG_LIST_NUMBER = "list_number";
     private static final String ITEMLIST = "itemList";
     private ArrayList<Item> itemList;
 

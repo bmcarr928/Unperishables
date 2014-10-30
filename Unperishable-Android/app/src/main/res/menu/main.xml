@@ -2,12 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
 
     tools:context=".MainActivity" >
-
-    <item android:id="@+id/addItem"
-        android:title="Add Item"
-        android:orderInCategory="1"
-        android:showAsAction="never" />
-
     <item android:id="@+id/action_loggout"
         android:title="Loggout"
         android:orderInCategory="2"
