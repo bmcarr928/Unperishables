@@ -3,8 +3,8 @@
 
     tools:context=".MainActivity" >
 
-    <item android:id="@+id/action_settings"
-        android:title="Sort"
+    <item android:id="@+id/addItem"
+        android:title="Add Item"
         android:orderInCategory="1"
         android:showAsAction="never" />
 

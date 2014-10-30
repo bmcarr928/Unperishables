@@ -1,6 +1,8 @@
 package com.bmcarr.unperishable.view;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,7 +11,11 @@ import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.DataAccess;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AddItem.OnFragmentInteractionListener {
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +38,12 @@ public class MainActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.addItem) {
+
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+            ft.replace(R.id.main_panel, new AddItem()).commit();
+
             return true;
         }
         return super.onOptionsItemSelected(item);
