@@ -76,6 +76,10 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
         return super.onOptionsItemSelected(item);
     }
 
+    public void switchToInvView() {
+        // can you make this method switch the fragments however you wanted them?
+    }
+
     /* The click listner for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override

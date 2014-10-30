@@ -1,14 +1,23 @@
 package com.bmcarr.unperishable.view;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,13 +68,60 @@ public class AddItem extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_item, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_add_item, container, false);
+
+
+        setupSpinner(view, R.id.category_spinner, R.array.categories_array);
+        setupSpinner(view, R.id.quantity_spinner,R.array.quantities_array);
+
+        Button addButton = (Button) view.findViewById(R.id.finish_button);
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // add item to database
+
+                // switch to inv view
+
+            }
+        });
+
+        Button cancelButton = (Button) view.findViewById(R.id.cancel_add_button);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).switchToInvView();
+            }
+        });
+
+        return view;
+    }
+
+    private void setupSpinner(View view, int spinnerID, int stringArrayID) {
+        Spinner spinner = (Spinner) view.findViewById(spinnerID);
+        List<String> list = new ArrayList<String>();
+
+        for (String i : view.getResources().getStringArray(stringArrayID)){
+            list.add(i);
+        }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(dataAdapter);
+
+        spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -92,6 +148,7 @@ public class AddItem extends Fragment {
         mListener = null;
     }
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -107,4 +164,19 @@ public class AddItem extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    private class CustomOnItemSelectedListener implements OnItemSelectedListener {
+
+        public void onItemSelected(AdapterView<?> parent, View view, int pos,
+                                   long id) {
+
+            Toast.makeText(parent.getContext(),
+                    "On Item Select : \n" + parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> arg0) {
+            // TODO Auto-generated method stub
+
+        }
+    }
 }
