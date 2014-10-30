@@ -1,23 +1,106 @@
 package com.bmcarr.unperishable.view;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.bmcarr.unperishable.R;
 
-
 public class MainActivity extends Activity {
+
+    private String[] mDrawerArray;
+    private DrawerLayout mDrawerLayout;
+        private ListView mDrawerList;
 
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        mDrawerArray = getResources().getStringArray(R.array.option_array);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+
+        // Set the adapter for the list view
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_list_item, mDrawerArray));
+        // Set the list's click listener
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   /* @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getFragmentManager().beginTransaction().add(R.id.tab_panel, new TabFragment()).commit();
+        FragmentManager manager = getFragmentManager();
+        Fragment frag = manager.findFragmentById(R.id.fragment_container);
+        if(frag == null){
+            frag = new DrawerLayoutFragment();
+            manager.beginTransaction().add(R.id.fragment_container,frag).commit();
+        }
+
+    }*/
+
+
+    /* The click listner for ListView in the navigation drawer */
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
     }
 
+    private void selectItem(int position) {
+        // update the main content by replacing fragments
+//        Fragment fragment = new PlanetFragment();
+//        Bundle args = new Bundle();
+//        args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
+//        fragment.setArguments(args);
+//
+//        FragmentManager fragmentManager = getFragmentManager();
+//        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+//
+//        // update selected item and title, then close the drawer
+//        mDrawerList.setItemChecked(position, true);
+//        setTitle(mPlanetTitles[position]);
+//        mDrawerLayout.closeDrawer(mDrawerList);
+
+
+        Fragment frag = new InventoryFragment();
+        /*Bundle args = new Bundle();*/
+        /*args.putInt(InventoryFragment.ARG_LIST_NUMBER, position);
+        frag.setArguments(args);*/
+        FragmentManager manager = getFragmentManager();
+        manager.beginTransaction().add(R.id.content_frame,frag).commit();
+        mDrawerList.setItemChecked(position,true);
+        setTitle(mDrawerArray[position]);
+        mDrawerLayout.closeDrawer(mDrawerList);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

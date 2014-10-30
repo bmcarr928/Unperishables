@@ -18,14 +18,15 @@ import java.util.List;
  * Created by jason on 10/27/2014.
  */
 public class InventoryFragment extends Fragment {
-
+    public final static String ARG_LIST_NUMBER = "list_number";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.invintory_fragment_layout, container, false);
-
-        ListView theListView = (ListView) view.findViewById(R.id.invlistView);
+        ListView theListView = (ListView) view.findViewById(R.id.inventory_list);
+        /*int i = getArguments().getInt(ARG_LIST_NUMBER);
+        String option = getResources().getStringArray(R.array.option_array)[i];*/
         String [] items = {"invcarrot","dog","cat","carrot1","dog1","cat1","carrot2","dog2","cat2","carrot3","dog3","cat3"};
         List<RowItem> rowItems = new ArrayList<RowItem>();
         for (int i =0; i < items.length; i++){
@@ -33,6 +34,7 @@ public class InventoryFragment extends Fragment {
         }
         CustomAdapter adapter = new CustomAdapter(getActivity(), rowItems);
         theListView.setAdapter(adapter);
+
 
 
         // probably change this from on click to on swipe?

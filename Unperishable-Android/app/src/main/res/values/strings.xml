@@ -7,5 +7,22 @@
     <string name="inventory">Inventory</string>
     <string name="shopping_list">Shopping List</string>
     <string name="screen_title">Inventory</string>
+    <string name="title_activity_login__fragment">Login_Fragment</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string-array name="option_array">
+        <item>Add</item>
+        <item>Grocery List</item>
+        <item>All Items</item>
+        <item>Refrigerator</item>
+        <item>Pantry</item>
+        <item>Spices</item>
+        <item>Out</item>
+        <item>Low</item>
+        <item>Stalked</item>
+    </string-array>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Web search</string>
+    <string name="app_not_available">Sorry, there\'s no web browser available</string>
 </resources>
