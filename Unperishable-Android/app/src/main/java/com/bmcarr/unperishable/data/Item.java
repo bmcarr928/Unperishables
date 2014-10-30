@@ -111,4 +111,9 @@ public class Item {
     public Date getExpirationDate() {
         return expirationDate;
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }

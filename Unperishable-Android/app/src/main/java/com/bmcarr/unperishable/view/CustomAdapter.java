@@ -10,36 +10,37 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bmcarr.unperishable.R;
+import com.bmcarr.unperishable.data.Item;
 
 import java.util.List;
 
 public class CustomAdapter extends BaseAdapter {
 
     Context context;
-    List<RowItem> rowItem;
+    List<Item> items;
 
-    CustomAdapter(Context context, List<RowItem> rowItem) {
+    CustomAdapter(Context context, List<Item> items) {
         this.context = context;
-        this.rowItem = rowItem;
+        this.items = items;
 
     }
 
     @Override
     public int getCount() {
 
-        return rowItem.size();
+        return items.size();
     }
 
     @Override
     public Object getItem(int position) {
 
-        return rowItem.get(position);
+        return items.get(position);
     }
 
     @Override
     public long getItemId(int position) {
 
-        return rowItem.indexOf(getItem(position));
+        return items.indexOf(getItem(position));
     }
 
     @Override
@@ -54,10 +55,10 @@ public class CustomAdapter extends BaseAdapter {
         ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
         TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
 
-        RowItem row_pos = rowItem.get(position);
+        Item row_pos = items.get(position);
         // setting the image resource and title
-        imgIcon.setImageResource(row_pos.getIcon());
-        txtTitle.setText(row_pos.getTitle());
+//        imgIcon.setImageResource(row_pos.getIcon());
+        txtTitle.setText(row_pos.getName());
 
         return convertView;
 

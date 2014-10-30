@@ -10,29 +10,36 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
+import com.bmcarr.unperishable.data.Item;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by jason on 10/27/2014.
- */
 public class InventoryFragment extends Fragment {
     public final static String ARG_LIST_NUMBER = "list_number";
+    private static final String ITEMLIST = "itemList";
+    private ArrayList<Item> itemList;
+
+    public static InventoryFragment getInstance(ArrayList<Item>itemList) {
+        InventoryFragment fragment = new InventoryFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ITEMLIST, itemList);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.invintory_fragment_layout, container, false);
+        Bundle args = this.getArguments();
+        this.itemList = (ArrayList<Item>) args.getSerializable(ITEMLIST);
+
+        View view = inflater.inflate(R.layout.inventory_fragment_layout, container, false);
+
         ListView theListView = (ListView) view.findViewById(R.id.inventory_list);
-        /*int i = getArguments().getInt(ARG_LIST_NUMBER);
-        String option = getResources().getStringArray(R.array.option_array)[i];*/
-        String [] items = {"invcarrot","dog","cat","carrot1","dog1","cat1","carrot2","dog2","cat2","carrot3","dog3","cat3"};
-        List<RowItem> rowItems = new ArrayList<RowItem>();
-        for (int i =0; i < items.length; i++){
-            rowItems.add(new RowItem(items[i], R.drawable.ic_launcher));
-        }
-        CustomAdapter adapter = new CustomAdapter(getActivity(), rowItems);
+        List<Item> items = this.itemList;
+
+        CustomAdapter adapter = new CustomAdapter(getActivity(), items);
         theListView.setAdapter(adapter);
 
 
