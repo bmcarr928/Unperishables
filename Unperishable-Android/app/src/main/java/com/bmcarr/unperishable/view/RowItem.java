@@ -1,4 +1,4 @@
-package com.bmcarr.unperishable.unperishable;
+package com.bmcarr.unperishable.view;
 
 public class RowItem {
 

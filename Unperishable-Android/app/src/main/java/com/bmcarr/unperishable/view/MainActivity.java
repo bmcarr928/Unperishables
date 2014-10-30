@@ -1,9 +1,11 @@
-package com.bmcarr.unperishable;
+package com.bmcarr.unperishable.view;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.bmcarr.unperishable.R;
 
 
 public class MainActivity extends Activity {

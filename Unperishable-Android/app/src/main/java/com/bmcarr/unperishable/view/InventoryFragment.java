@@ -1,4 +1,4 @@
-package com.bmcarr.unperishable.unperishable;
+package com.bmcarr.unperishable.view;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.bmcarr.unperishable.R;
 
 import java.util.ArrayList;
 import java.util.List;

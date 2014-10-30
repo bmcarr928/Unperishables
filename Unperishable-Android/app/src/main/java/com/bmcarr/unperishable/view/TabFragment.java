@@ -1,4 +1,4 @@
-package com.bmcarr.unperishable.unperishable;
+package com.bmcarr.unperishable.view;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.bmcarr.unperishable.R;
 
 /**
  * Created by jason on 10/27/2014.
