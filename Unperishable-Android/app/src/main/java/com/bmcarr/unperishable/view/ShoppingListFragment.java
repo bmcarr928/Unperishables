@@ -31,8 +31,8 @@ public class ShoppingListFragment extends Fragment {
         for (int i =0; i < items.length; i++){
             rowItems.add(new RowItem(items[i], R.drawable.ic_launcher));
         }
-        CustomAdapter adapter = new CustomAdapter(getActivity(), rowItems);
-        theListView.setAdapter(adapter);
+//        CustomAdapter adapter = new CustomAdapter(getActivity(), rowItems);
+//        theListView.setAdapter(adapter);
 
 
         // probably change this from on click to on swipe?

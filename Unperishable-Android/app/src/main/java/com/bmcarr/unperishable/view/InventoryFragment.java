@@ -10,27 +10,43 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
+import com.bmcarr.unperishable.data.DataAccess;
+import com.bmcarr.unperishable.data.Item;
+import com.bmcarr.unperishable.util.Config;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by jason on 10/27/2014.
- */
 public class InventoryFragment extends Fragment {
 
+    private static final String USERNAME = "username";
+
+    private DataAccess dataAccess;
+
+    public static InventoryFragment getInstance(String username) {
+        InventoryFragment fragment = new InventoryFragment();
+        Bundle args = new Bundle();
+        args.putString(USERNAME, username);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.invintory_fragment_layout, container, false);
+        String username = this.getArguments().getString(USERNAME);
+
+        this.dataAccess = new DataAccess(this.getActivity().getApplicationContext(), username);
+
+        dataAccess.saveItem(new Item("Ketchup", Config.Category.REFRIGERATOR, Config.Quantity.STOCKED));
+        dataAccess.saveItem(new Item("Mustard", Config.Category.REFRIGERATOR, Config.Quantity.STOCKED));
+        dataAccess.saveItem(new Item("Bacon", Config.Category.REFRIGERATOR, Config.Quantity.STOCKED));
+
+        View view = inflater.inflate(R.layout.inventory_fragment_layout, container, false);
 
         ListView theListView = (ListView) view.findViewById(R.id.invlistView);
-        String [] items = {"invcarrot","dog","cat","carrot1","dog1","cat1","carrot2","dog2","cat2","carrot3","dog3","cat3"};
-        List<RowItem> rowItems = new ArrayList<RowItem>();
-        for (int i =0; i < items.length; i++){
-            rowItems.add(new RowItem(items[i], R.drawable.ic_launcher));
-        }
+        List<Item> rowItems = dataAccess.queryForAllItems();
+
         CustomAdapter adapter = new CustomAdapter(getActivity(), rowItems);
         theListView.setAdapter(adapter);
 
