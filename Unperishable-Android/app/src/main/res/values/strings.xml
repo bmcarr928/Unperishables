@@ -4,5 +4,46 @@
     <string name="app_name">Unperishable</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="inventory">Inventory</string>
+    <string name="shopping_list">Shopping List</string>
+    <string name="screen_title">Inventory</string>
+    <string name="title_activity_login__fragment">Login_Fragment</string>
+    <string name="enter_username">Enter username</string>
+    <string name="enter_password">Enter password</string>
+    <!--<string name="hello_blank_fragment">Hello blank fragment</string>-->
+    <string name="log_in">Log In</string>
+    <string name="enter_name">Enter Item Name</string>
+    <string name="enter_input_date">Enter Input Date:</string>
+    <string name="enter_expiration_date">Enter Expiration Date</string>
+    <string name="enter_owner_name">Enter Owner\'s name (if applicable)</string>
+    <string name="add_item_button">Add Item</string>
+    <string name="cancel_add_item_button">Cancel</string>
 
+    <string-array name="quantities_array">
+        <item>Out</item>
+        <item>Low</item>
+        <item>Stocked</item>
+    </string-array>
+
+    <string-array name="categories_array">
+        <item>Refrigerator</item>
+        <item>Pantry</item>
+        <item>Spices</item>
+    </string-array>
+
+    <string-array name="option_array">
+        <item>Add</item>
+        <item>Grocery List</item>
+        <item>All Items</item>
+        <item>Refrigerator</item>
+        <item>Pantry</item>
+        <item>Spices</item>
+        <item>Out</item>
+        <item>Low</item>
+        <item>Stalked</item>
+    </string-array>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Web search</string>
+    <string name="app_not_available">Sorry, there\'s no web browser available</string>
 </resources>

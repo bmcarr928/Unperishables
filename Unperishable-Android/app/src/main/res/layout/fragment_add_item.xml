@@ -1,0 +1,75 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal|center_vertical"
+    tools:context="com.bmcarr.unperishable.view.AddItem">
+
+    <EditText
+        android:id="@+id/name_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/enter_name"
+        />
+    <Spinner
+        android:id="@+id/quantity_spinner"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"/>
+    <Spinner
+        android:id="@+id/category_spinner"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/input_date_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_input_date"/>
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:calendarViewShown="false"
+        android:scaleX="0.5"
+        android:scaleY="0.5"/>
+
+    <TextView
+        android:id="@+id/expiration_date_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_expiration_date"/>
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:calendarViewShown="false"
+        android:scaleX="0.5"
+        android:scaleY="0.5"/>
+
+    <EditText
+        android:id="@+id/owner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:hint="@string/enter_owner_name"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/finish_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_item_button"/>
+
+        <Button
+            android:id="@+id/cancel_add_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel_add_item_button"/>
+        </LinearLayout>
+
+</LinearLayout>
