@@ -7,10 +7,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -79,7 +82,7 @@ public class AddItem extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.fragment_add_item, container, false);
+        final View view = inflater.inflate(R.layout.fragment_add_item, container, false);
 
 
         setupSpinner(view, R.id.category_spinner, R.array.categories_array);
@@ -91,6 +94,19 @@ public class AddItem extends Fragment {
             @Override
             public void onClick(View v) {
                 // add item to database
+                String itemName = ((EditText) v.findViewById(R.id.name_edit)).getText().toString();
+                if (itemName != null){
+                    Toast.makeText(v.getContext(),"Requires Item Name", Toast.LENGTH_LONG).show();
+                }
+                String category = ((Spinner) v.findViewById(R.id.category_spinner)).getSelectedItem().toString();
+                if (itemName == null){
+
+                }
+                String quantity = ((Spinner) v.findViewById(R.id.quantity_spinner)).getSelectedItem().toString();
+                int inputDate = ((DatePicker) v.findViewById(R.id.input_date)).getDayOfMonth();
+                // and more DatePickers depending on what information we want
+
+                String owner = ((EditText) v.findViewById(R.id.owner)).getText().toString();
 
                 // switch to inv view
 
