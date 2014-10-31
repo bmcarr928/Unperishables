@@ -1,9 +1,7 @@
 package com.bmcarr.unperishable.view;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +16,8 @@ import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.DataAccess;
 import com.bmcarr.unperishable.data.Item;
 import com.bmcarr.unperishable.util.Config;
+
+import java.util.ArrayList;
 
 public class MainActivity extends Activity implements AddItem.OnFragmentInteractionListener {
 
@@ -64,15 +64,15 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.addItem) {
-
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-            ft.replace(R.id.main_panel, new AddItem()).commit();
-
-            return true;
-        }
+//        int id = item.getItemId();
+//        if (id == R.id.addItem) {
+//
+//            FragmentTransaction ft = getFragmentManager().beginTransaction();
+//
+//            ft.replace(R.id.main_panel, new AddItem()).commit();
+//
+//            return true;
+//        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -88,38 +88,140 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
         }
     }
 
-    private void selectItem(int position) {
-        // update the main content by replacing fragments
-//        Fragment fragment = new PlanetFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-//        fragment.setArguments(args);
-//
-//        FragmentManager fragmentManager = getFragmentManager();
-//        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-//
-//        // update seleOnFragmentInteractionListenercted item and title, then close the drawer
-//        mDrawerList.setItemChecked(position, true);
-//        setTitle(mPlanetTitles[position]);
-//        mDrawerLayout.closeDrawer(mDrawerList);
+    /*
+    * selectItem (int position) is a private method called by the DrawerItemClickListener class.
+    * This method handles selections placed on the Drawer. A switch statement is used to determine
+    * which drawer was selected and the view is changed to display appropriately.
+    * There is a warning about getActionBar.setTitle(mDrawerArray[position]) possibly producing an
+    * error. This array is specific for the drawerlayout and as long as not changed no exceptions
+    * should be thrown. Suppressed warnings for this reason.
+    * */
 
+     @SuppressWarnings("ConstantConditions")
+     private void selectItem(int position) {
+        FragmentManager fragmentManager;
 
-        Fragment frag = InventoryFragment.getInstance(this.dataAccess.queryForAllItems());
-        /*Bundle args = new Bundle();*/
-        /*args.putInt(InventoryFragment.ARG_LIST_NUMBER, position);
-        frag.setArguments(args);*/
-        FragmentManager manager = getFragmentManager();
-        manager.beginTransaction().add(R.id.main_panel, frag).commit();
-        mDrawerList.setItemChecked(position, true);
-        setTitle(mDrawerArray[position]);
-        mDrawerLayout.closeDrawer(mDrawerList);
+        switch (position){
+
+             case 0: fragmentManager = getFragmentManager();
+                     fragmentManager.beginTransaction().replace(R.id.main_panel, new AddItem()).commit();
+                     mDrawerList.setItemChecked(position,true);
+                     mDrawerList.setSelection(position);
+                     getActionBar().setTitle(mDrawerArray[position]);
+                     mDrawerLayout.closeDrawer(mDrawerList);
+                     break;
+
+             case 1: fragmentManager = getFragmentManager();  //Grocery List
+                     fragmentManager.beginTransaction().replace(R.id.main_panel, InventoryFragment.getInstance(generateGroceryList())).commit();
+                     mDrawerList.setItemChecked(position, true);
+                     mDrawerList.setSelection(position);
+                     getActionBar().setTitle(mDrawerArray[position]);
+                     mDrawerLayout.closeDrawer(mDrawerList);
+                      break;
+             case 2: fragmentManager = getFragmentManager();  //All Items
+                     fragmentManager.beginTransaction().replace(R.id.main_panel, InventoryFragment.getInstance(this.dataAccess.queryForAllItems())).commit();
+                     mDrawerList.setItemChecked(position, true);
+                     mDrawerList.setSelection(position);
+                     getActionBar().setTitle(mDrawerArray[position]);
+                     mDrawerLayout.closeDrawer(mDrawerList);
+                     break;
+             case 3: fragmentManager = getFragmentManager();  //Refrigerator
+                     fragmentManager.beginTransaction().replace(R.id.main_panel,
+                             InventoryFragment.getInstance(this.dataAccess.queryForItemsOfCategory(Config.Category.REFRIGERATOR))).commit();
+                     mDrawerList.setItemChecked(position, true);
+                     mDrawerList.setSelection(position);
+                     getActionBar().setTitle(mDrawerArray[position]);
+                     mDrawerLayout.closeDrawer(mDrawerList);
+                     break;
+             case 4: fragmentManager = getFragmentManager();  //Pantry
+                     fragmentManager.beginTransaction().replace(R.id.main_panel,
+                             InventoryFragment.getInstance(this.dataAccess.queryForItemsOfCategory(Config.Category.PANTRY))).commit();
+                     mDrawerList.setItemChecked(position, true);
+                     mDrawerList.setSelection(position);
+                     getActionBar().setTitle(mDrawerArray[position]);
+                     mDrawerLayout.closeDrawer(mDrawerList);
+                     break;
+             case 5: fragmentManager = getFragmentManager();  //Spices
+                     fragmentManager.beginTransaction().replace(R.id.main_panel,
+                             InventoryFragment.getInstance(this.dataAccess.queryForItemsOfCategory(Config.Category.SPICE))).commit();
+                     mDrawerList.setItemChecked(position, true);
+                     mDrawerList.setSelection(position);
+                     getActionBar().setTitle(mDrawerArray[position]);
+                     mDrawerLayout.closeDrawer(mDrawerList);
+                     break;
+             case 6: fragmentManager = getFragmentManager();  //Out
+                     fragmentManager.beginTransaction().replace(R.id.main_panel,
+                             InventoryFragment.getInstance(this.dataAccess.queryForItemsOfQuantity(Config.Quantity.OUT))).commit();
+                     mDrawerList.setItemChecked(position, true);
+                     mDrawerList.setSelection(position);
+                     getActionBar().setTitle(mDrawerArray[position]);
+                     mDrawerLayout.closeDrawer(mDrawerList);
+                     break;
+             case 7: fragmentManager = getFragmentManager();  //Low
+                     fragmentManager.beginTransaction().replace(R.id.main_panel,
+                             InventoryFragment.getInstance(this.dataAccess.queryForItemsOfQuantity(Config.Quantity.LOW))).commit();
+                     mDrawerList.setItemChecked(position, true);
+                     mDrawerList.setSelection(position);
+                     getActionBar().setTitle(mDrawerArray[position]);
+                     mDrawerLayout.closeDrawer(mDrawerList);
+                     break;
+             case 8: fragmentManager = getFragmentManager();  //Stocked
+                     fragmentManager.beginTransaction().replace(R.id.main_panel,
+                             InventoryFragment.getInstance(this.dataAccess.queryForItemsOfQuantity(Config.Quantity.STOCKED))).commit();
+                     mDrawerList.setItemChecked(position, true);
+                     mDrawerList.setSelection(position);
+                     getActionBar().setTitle(mDrawerArray[position]);
+                     mDrawerLayout.closeDrawer(mDrawerList);
+                     break;
+        }
+    }
+
+    /*
+    * Thought that grocery list was supposed to display items that are both out and low. Didn't think we had
+    * a query that did this. if we do just delete this, if we don't I think we should. Didn't want to mess with data base queries.
+    * so created this method to generate my grocery list using two queryForItemsOfQuantity queries.
+    * */
+    private ArrayList<Item> generateGroceryList() {
+        ArrayList<Item> groceryList = new ArrayList<Item>();
+        ArrayList<Item> temp1 = this.dataAccess.queryForItemsOfQuantity(Config.Quantity.LOW);
+        ArrayList<Item> temp2 = this.dataAccess.queryForItemsOfQuantity(Config.Quantity.OUT);
+        for (Item x : temp1) {
+            groceryList.add(x);
+        }
+        for (Item x : temp2) {
+            groceryList.add(x);
+        }
+        return groceryList;
     }
 
     public void loginUser(String username) {
+        /*
+        * Manually generated values used for testing out display of different queries
+        * Feel free to delete hard coded adds when you get add fragment working properly.
+        * */
         this.dataAccess = new DataAccess(this.getApplicationContext(), username);
 
-        this.dataAccess.saveItem(new Item("Ketchup", Config.Category.REFRIGERATOR, Config.Quantity.STOCKED)
-                .withOwner("Steve"));
+
+        this.dataAccess.saveItem(new Item("Salt", Config.Category.SPICE, Config.Quantity.OUT)
+                .withOwner("Bob"));
+        this.dataAccess.saveItem(new Item("Butter", Config.Category.REFRIGERATOR, Config.Quantity.OUT)
+                .withOwner("Bob"));
+        this.dataAccess.saveItem(new Item("Cumin", Config.Category.SPICE, Config.Quantity.OUT)
+                .withOwner("Bob"));
+        this.dataAccess.saveItem(new Item("Bacon", Config.Category.REFRIGERATOR, Config.Quantity.LOW)
+                .withOwner("Bob"));
+        this.dataAccess.saveItem(new Item("Pasta", Config.Category.PANTRY, Config.Quantity.LOW)
+                .withOwner("Bob"));
+        this.dataAccess.saveItem(new Item("Rice", Config.Category.PANTRY, Config.Quantity.LOW)
+                .withOwner("Bob"));
+        this.dataAccess.saveItem(new Item("Milk", Config.Category.REFRIGERATOR, Config.Quantity.STOCKED)
+                .withOwner("Bob"));
+        this.dataAccess.saveItem(new Item("Chips", Config.Category.PANTRY, Config.Quantity.STOCKED)
+                .withOwner("Bob"));
+        this.dataAccess.saveItem(new Item("Tomatoes", Config.Category.REFRIGERATOR, Config.Quantity.STOCKED)
+                .withOwner("Bob"));
+        this.dataAccess.saveItem(new Item("Potatoes", Config.Category.REFRIGERATOR, Config.Quantity.STOCKED)
+                .withOwner("Bob"));
 
         InventoryFragment inventoryFragment = InventoryFragment.getInstance(this.dataAccess.queryForAllItems());
         getFragmentManager().beginTransaction().replace(R.id.main_panel, inventoryFragment,"inventoryFragment").commit();
