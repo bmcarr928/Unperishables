@@ -167,6 +167,7 @@ public class EditItem extends Fragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                
                 EditItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                         InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
             }

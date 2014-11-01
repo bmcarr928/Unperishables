@@ -12,6 +12,7 @@ import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class InventoryFragment extends Fragment {
@@ -21,6 +22,7 @@ public class InventoryFragment extends Fragment {
     public static InventoryFragment getInstance(ArrayList<Item>itemList) {
         InventoryFragment fragment = new InventoryFragment();
         Bundle args = new Bundle();
+        Collections.sort(itemList);
         args.putSerializable(ITEMLIST, itemList);
         fragment.setArguments(args);
         return fragment;

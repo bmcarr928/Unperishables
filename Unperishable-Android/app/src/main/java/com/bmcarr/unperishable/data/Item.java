@@ -10,7 +10,8 @@ import java.sql.Date;
  * a clean and simple API that employs a builder pattern for adding non-required attributes to
  * an Item
  */
-public class Item implements Serializable{
+
+public class Item implements Serializable, Comparable{
 
     private String name;
     private Config.Category category;
@@ -68,6 +69,14 @@ public class Item implements Serializable{
     public Item withInputDate(Date date) {
         this.inputDate = date;
         return this;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if ( o instanceof Item ) {
+            return this.getName().compareTo(((Item) o).getName());
+        }
+        return 0;
     }
 
     /**
