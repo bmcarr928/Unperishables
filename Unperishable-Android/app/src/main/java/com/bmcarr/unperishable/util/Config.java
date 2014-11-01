@@ -41,6 +41,13 @@ public class Config {
             }
             throw new IllegalArgumentException("Integer " + id + " does not map to a Category");
         }
+
+        public String getName() {
+            if ( id == Category.REFRIGERATOR.getId() ) return "REFRIGERATOR";
+            if ( id == Category.PANTRY.getId() ) return "PANTRY";
+            if ( id == Category.SPICE.getId() ) return "SPICE";
+            return "";
+        }
     }
 
     public enum Quantity {
