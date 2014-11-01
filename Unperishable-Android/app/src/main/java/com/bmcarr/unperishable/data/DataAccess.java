@@ -51,6 +51,20 @@ public class DataAccess {
         }
     }
 
+    public boolean deleteItem(Item item){
+        db.beginTransaction();
+        String query = String.format("DELETE" +" FROM " + Config.ITEM_TABLE_NAME + " WHERE " +
+                Config.ITEM_NAME + " = \"%s\"", item.getName());
+        Cursor queryResult = db.rawQuery(query, null);
+        db.endTransaction();
+        if (queryResult.getCount()==0) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
     /**
      * Returns all items in the database
      *
