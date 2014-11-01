@@ -2,8 +2,10 @@ package com.bmcarr.unperishable.view;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +20,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
+import com.bmcarr.unperishable.data.DataAccess;
+import com.bmcarr.unperishable.data.Item;
+import com.bmcarr.unperishable.util.Config;
 
 import java.util.ArrayList;
+import java.sql.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -41,7 +48,21 @@ public class AddItem extends Fragment {
     private String mParam1;
     private String mParam2;
 
+
     private OnFragmentInteractionListener mListener;
+
+
+    // additem components
+    private EditText itemNameEditText;
+    private EditText ownerEditText;
+    private Spinner categorySpinner;
+    private Spinner quantitySpinner;
+    private DatePicker inputDatePicker;
+    private DatePicker expirationDatePicker;
+
+
+
+
 
     /**
      * Use this factory method to create a new instance of
@@ -85,30 +106,68 @@ public class AddItem extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_add_item, container, false);
 
 
-        setupSpinner(view, R.id.category_spinner, R.array.categories_array);
-        setupSpinner(view, R.id.quantity_spinner,R.array.quantities_array);
+        itemNameEditText = (EditText) view.findViewById(R.id.name_edit);
+        ownerEditText = (EditText) view.findViewById(R.id.owner);
+        categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
+        quantitySpinner = (Spinner) view.findViewById(R.id.quantity_spinner);
+        inputDatePicker = (DatePicker) view.findViewById(R.id.input_date);
+        expirationDatePicker = (DatePicker) view.findViewById(R.id.expiration_date);
+
+
+        setupSpinner(view,categorySpinner, R.array.categories_array);
+        setupSpinner(view, quantitySpinner,R.array.quantities_array);
 
         Button addButton = (Button) view.findViewById(R.id.finish_button);
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // add item to database
-                String itemName = ((EditText) v.findViewById(R.id.name_edit)).getText().toString();
-                if (itemName != null){
+               String itemName =  itemNameEditText.getText().toString();
+                int categoryPosition = categorySpinner.getSelectedItemPosition();
+                int quantityPosition = quantitySpinner.getSelectedItemPosition();
+
+                GregorianCalendar inputCalendar = new GregorianCalendar(inputDatePicker.getYear(),
+                        inputDatePicker.getMonth(), inputDatePicker.getDayOfMonth());
+                Date inputDate = new Date(inputCalendar.getTimeInMillis());
+
+                GregorianCalendar expirationCalendar = new GregorianCalendar(expirationDatePicker.getYear(),
+                        expirationDatePicker.getMonth(), expirationDatePicker.getDayOfMonth());
+                Date expirationDate = new Date(expirationCalendar.getTimeInMillis());
+
+                String owner = ownerEditText.getText().toString();
+
+
+
+
+                if (itemName.equals("")){
                     Toast.makeText(v.getContext(),"Requires Item Name", Toast.LENGTH_LONG).show();
+                }else {
+                    Item item = new Item(itemName ,Config.Category.getCategory(categoryPosition),
+                            Config.Quantity.getQuantity(quantityPosition)).withInputDate(inputDate);
+
+                    if(!owner.equals("")){
+                        item.withOwner(owner);
+
+                    }
+                    if(inputDate.compareTo(expirationDate) == 0){
+                        item.withExpirationDate(expirationDate);
+
+                    }
+                    DataAccess dataAccess = ((MainActivity) getActivity()).getDataAccess();
+                    if (dataAccess.queryForItemOfName(itemName) != null){
+                        Toast.makeText(v.getContext(),"Item of this name already exists", Toast.LENGTH_LONG).show();
+                    }else {
+                        //add item to database
+                        dataAccess.saveItem(item);
+                        // switch to inv view
+                        AddItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+                                InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+                    }
                 }
-                String category = ((Spinner) v.findViewById(R.id.category_spinner)).getSelectedItem().toString();
-                if (itemName == null){
 
-                }
-                String quantity = ((Spinner) v.findViewById(R.id.quantity_spinner)).getSelectedItem().toString();
-                int inputDate = ((DatePicker) v.findViewById(R.id.input_date)).getDayOfMonth();
-                // and more DatePickers depending on what information we want
 
-                String owner = ((EditText) v.findViewById(R.id.owner)).getText().toString();
 
-                // switch to inv view
+
 
             }
         });
@@ -118,22 +177,23 @@ public class AddItem extends Fragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).switchToInvView();
+                AddItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+                        InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
             }
         });
 
         return view;
     }
 
-    private void setupSpinner(View view, int spinnerID, int stringArrayID) {
-        Spinner spinner = (Spinner) view.findViewById(spinnerID);
+    private void setupSpinner(View view, Spinner spinner, int stringArrayID) {
         List<String> list = new ArrayList<String>();
 
         for (String i : view.getResources().getStringArray(stringArrayID)){
             list.add(i);
         }
 
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, list);
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(dataAdapter);
 
@@ -182,11 +242,8 @@ public class AddItem extends Fragment {
 
     private class CustomOnItemSelectedListener implements OnItemSelectedListener {
 
-        public void onItemSelected(AdapterView<?> parent, View view, int pos,
-                                   long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) {
 
-            Toast.makeText(parent.getContext(),
-                    "On Item Select : \n" + parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
         }
 
         @Override

@@ -80,6 +80,10 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
         // can you make this method switch the fragments however you wanted them?
     }
 
+    public DataAccess getDataAccess() {
+        return dataAccess;
+    }
+
     /* The click listner for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
