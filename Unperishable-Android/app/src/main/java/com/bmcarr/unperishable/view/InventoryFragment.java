@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
@@ -35,7 +34,7 @@ public class InventoryFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.inventory_fragment_layout, container, false);
 
-        ListView theListView = (ListView) view.findViewById(R.id.inventory_list);
+        final ListView theListView = (ListView) view.findViewById(R.id.inventory_list);
         List<Item> items = this.itemList;
 
         CustomAdapter adapter = new CustomAdapter(getActivity(), items);
@@ -46,10 +45,13 @@ public class InventoryFragment extends Fragment {
         // probably change this from on click to on swipe?
         theListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
-            public void onItemClick( AdapterView<?> adapterView, View view, int i, long l){
+            public void onItemClick( AdapterView<?> adapterView, View view, int position, long l){
                 // do something
-                String itemPicked = "you selected " + String.valueOf(adapterView.getItemAtPosition(i));
-                Toast.makeText(getActivity(), itemPicked, Toast.LENGTH_SHORT).show();
+                InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+                        EditItem.newInstance((Item) adapterView.getItemAtPosition(position))).commit();
+
+//                String itemPicked = "you selected " + String.valueOf(adapterView.getItemAtPosition(position));
+//                Toast.makeText(getActivity(), itemPicked, Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -19,7 +19,7 @@ import com.bmcarr.unperishable.util.Config;
 
 import java.util.ArrayList;
 
-public class MainActivity extends Activity implements AddItem.OnFragmentInteractionListener {
+public class MainActivity extends Activity implements AddItem.OnFragmentInteractionListener, EditItem.OnFragmentInteractionListener {
 
     private String[] mDrawerArray;
     private DrawerLayout mDrawerLayout;

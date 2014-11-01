@@ -2,6 +2,7 @@ package com.bmcarr.unperishable.data;
 
 import com.bmcarr.unperishable.util.Config;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 /**
@@ -9,7 +10,7 @@ import java.sql.Date;
  * a clean and simple API that employs a builder pattern for adding non-required attributes to
  * an Item
  */
-public class Item {
+public class Item implements Serializable{
 
     private String name;
     private Config.Category category;
