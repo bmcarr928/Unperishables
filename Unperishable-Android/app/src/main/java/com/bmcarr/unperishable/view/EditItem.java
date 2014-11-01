@@ -13,13 +13,17 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
+import com.bmcarr.unperishable.data.DataAccess;
 import com.bmcarr.unperishable.data.Item;
+import com.bmcarr.unperishable.util.Config;
 
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class EditItem extends Fragment {
@@ -102,7 +106,49 @@ public class EditItem extends Fragment {
             @Override
             public void onClick(View v) {
 
+                String itemName =  itemNameEditText.getText().toString();
+                int categoryPosition = categorySpinner.getSelectedItemPosition();
+                int quantityPosition = quantitySpinner.getSelectedItemPosition();
 
+                GregorianCalendar inputCalendar = new GregorianCalendar(inputDatePicker.getYear(),
+                        inputDatePicker.getMonth(), inputDatePicker.getDayOfMonth());
+                Date inputDate = new Date(inputCalendar.getTimeInMillis());
+
+                GregorianCalendar expirationCalendar = new GregorianCalendar(expirationDatePicker.getYear(),
+                        expirationDatePicker.getMonth(), expirationDatePicker.getDayOfMonth());
+                Date expirationDate = new Date(expirationCalendar.getTimeInMillis());
+
+                String owner = ownerEditText.getText().toString();
+
+
+
+
+                if (itemName.equals("")){
+                    Toast.makeText(v.getContext(), "Requires Item Name", Toast.LENGTH_LONG).show();
+                }else {
+                    Item item = new Item(itemName , Config.Category.getCategory(categoryPosition),
+                            Config.Quantity.getQuantity(quantityPosition)).withInputDate(inputDate);
+
+                    if(!owner.equals("")){
+                        item.withOwner(owner);
+
+                    }
+                    if(inputDate.compareTo(expirationDate) == 0){
+                        item.withExpirationDate(expirationDate);
+
+                    }
+                    DataAccess dataAccess = ((MainActivity) getActivity()).getDataAccess();
+                    if (dataAccess.queryForItemOfName(itemName) != null){
+                        //delete item then re add it
+                        dataAccess.deleteItem(item);
+                        dataAccess.saveItem(item);
+                    }else {
+                        //add item to database
+                        dataAccess.saveItem(item);
+                    }
+                    EditItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+                            InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+                }
             }
         });
         Button deleteButton = (Button) view.findViewById(R.id.delete_button);
