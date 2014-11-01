@@ -2,14 +2,11 @@ package com.bmcarr.unperishable.view;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -24,8 +21,8 @@ import com.bmcarr.unperishable.data.DataAccess;
 import com.bmcarr.unperishable.data.Item;
 import com.bmcarr.unperishable.util.Config;
 
-import java.util.ArrayList;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -149,7 +146,7 @@ public class AddItem extends Fragment {
                         item.withOwner(owner);
 
                     }
-                    if(inputDate.compareTo(expirationDate) == 0){
+                    if(inputDate.compareTo(expirationDate) != 0){
                         item.withExpirationDate(expirationDate);
 
                     }

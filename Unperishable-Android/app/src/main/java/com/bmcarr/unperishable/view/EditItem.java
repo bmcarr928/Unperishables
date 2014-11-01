@@ -27,15 +27,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class EditItem extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-         private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private static final String ITEM = "item";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -47,7 +39,7 @@ public class EditItem extends Fragment {
     private DatePicker inputDatePicker;
     private DatePicker expirationDatePicker;
 
-    private Item theItem;
+    private Item oldItem;
 
 
     /**
@@ -56,7 +48,6 @@ public class EditItem extends Fragment {
      *
      * @return A new instance of fragment EditItem.
      */
-    // TODO: Rename and change types and number of parameters
     public static EditItem newInstance(Item theItem) {
 
         EditItem fragment = new EditItem();
@@ -74,42 +65,49 @@ public class EditItem extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Bundle args = this.getArguments();
-        theItem = (Item) args.getSerializable(ITEM);
+        oldItem = (Item) args.getSerializable(ITEM);
         // Inflate the layout for this fragment
-
         View view = inflater.inflate(R.layout.fragment_edit_item, container, false);
 
+
+        // get EditTexts and update them with info in oldItem
         itemNameEditText = (EditText) view.findViewById(R.id.editItem_name_edit);
-        itemNameEditText.setText(theItem.getName());
+        itemNameEditText.setText(oldItem.getName());
+
         ownerEditText = (EditText) view.findViewById(R.id.editItem_owner);
-        if(theItem.getOwner() != null){
-            ownerEditText.setText(theItem.getOwner());
+        if(oldItem.getOwner() != null){
+            ownerEditText.setText(oldItem.getOwner());
         }
+
+        // get Spinners and set them to current info in olditem
         categorySpinner = (Spinner) view.findViewById(R.id.editItem_category_spinner);
         quantitySpinner = (Spinner) view.findViewById(R.id.editItem_quantity_spinner);
 
-        setupSpinner(view,categorySpinner, R.array.categories_array, theItem.getCategory().getId());
-        setupSpinner(view, quantitySpinner, R.array.quantities_array, theItem.getQuantity().getId());
+        setupSpinner(view,categorySpinner, R.array.categories_array, oldItem.getCategory().getId());
+        setupSpinner(view, quantitySpinner, R.array.quantities_array, oldItem.getQuantity().getId());
 
-
+        // get DatePickers and if there is info about these items change the pickers
         inputDatePicker = (DatePicker) view.findViewById(R.id.editItem_input_date);
-        if (theItem.getInputDate() != null) {
-            setupDatePicker(theItem.getInputDate(), inputDatePicker);
+        if (oldItem.getInputDate() != null) {
+            updateDatePicker(oldItem.getInputDate(), inputDatePicker);
         }
         expirationDatePicker = (DatePicker) view.findViewById(R.id.editItem_expiration_date);
-        if (theItem.getExpirationDate() != null) {
-            setupDatePicker(theItem.getExpirationDate(), expirationDatePicker);
+        if (oldItem.getExpirationDate() != null) {
+            updateDatePicker(oldItem.getExpirationDate(), expirationDatePicker);
         }
-        Button addButton = (Button) view.findViewById(R.id.editItem_finish_button);
 
-        addButton.setOnClickListener(new View.OnClickListener() {
+        // button for updating
+        Button updateButton = (Button) view.findViewById(R.id.editItem_finish_button);
+
+        updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String itemName =  itemNameEditText.getText().toString();
+                String updatedItemName =  itemNameEditText.getText().toString();
                 int categoryPosition = categorySpinner.getSelectedItemPosition();
                 int quantityPosition = quantitySpinner.getSelectedItemPosition();
 
+                // must do this, going from java.sql.Data to java.util.Data types
                 GregorianCalendar inputCalendar = new GregorianCalendar(inputDatePicker.getYear(),
                         inputDatePicker.getMonth(), inputDatePicker.getDayOfMonth());
                 Date inputDate = new Date(inputCalendar.getTimeInMillis());
@@ -123,51 +121,68 @@ public class EditItem extends Fragment {
 
 
 
-                if (itemName.equals("")){
+                if (updatedItemName.equals("")){
                     Toast.makeText(v.getContext(), "Requires Item Name", Toast.LENGTH_LONG).show();
                 }else {
-                    Item item = new Item(itemName , Config.Category.getCategory(categoryPosition),
+
+                    Item updatedItem = new Item(updatedItemName , Config.Category.getCategory(categoryPosition),
                             Config.Quantity.getQuantity(quantityPosition)).withInputDate(inputDate);
 
                     if(!owner.equals("")){
-                        item.withOwner(owner);
+                        updatedItem.withOwner(owner);
 
                     }
-                    if(inputDate.compareTo(expirationDate) == 0){
-                        item.withExpirationDate(expirationDate);
+                    if(inputDate.compareTo(expirationDate) != 0){
+                        updatedItem.withExpirationDate(expirationDate);
 
                     }
                     DataAccess dataAccess = ((MainActivity) getActivity()).getDataAccess();
-                    if (dataAccess.queryForItemOfName(itemName) != null){
-                        //delete item then re add it
-                        dataAccess.deleteItem(item);
-                        dataAccess.saveItem(item);
+
+                        // did name change?
+                    if (oldItem.getName().compareTo(updatedItemName) != 0){
+                        // yes name changed
+
+                               //is changed name already in the database?
+                            if (dataAccess.queryForItemOfName(updatedItemName) != null){
+                                // yes, can't use that name, name already taken. EX renaming apple
+                                // to apple1 when apple1 already is in DataBase
+                                Toast.makeText(v.getContext(),"Item of this name already exists", Toast.LENGTH_LONG).show();
+                            }else {
+                                // no, delete oldItem add updatedItem (no name conflicts)
+                                dataAccess.deleteItem(oldItem);
+                                dataAccess.saveItem(updatedItem);
+                            }
+
                     }else {
-                        //add item to database
-                        dataAccess.saveItem(item);
+                        //no, name did not change
+                        dataAccess.saveItem(updatedItem);
                     }
+
                     EditItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                             InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
                 }
             }
         });
+
+        // button for deleting items
         Button deleteButton = (Button) view.findViewById(R.id.delete_button);
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).getDataAccess().deleteItem(theItem);
+                ((MainActivity) getActivity()).getDataAccess().deleteItem(oldItem);
                 EditItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                         InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
             }
         });
 
+        // button for backing out of this fragment
         Button cancelButton = (Button) view.findViewById(R.id.editItem_cancel_add_button);
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+
                 EditItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                         InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
             }
@@ -176,8 +191,12 @@ public class EditItem extends Fragment {
         return view;
     }
 
-
-    private void setupDatePicker(Date setDate, DatePicker picker){
+    /**
+     * Use to update the date on a DatePicker
+     * @param setDate a java.util.Date object
+     * @param picker  a DatePicker object
+     */
+    private void updateDatePicker(Date setDate, DatePicker picker){
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(setDate.getTime());
         int year = cal.get(Calendar.YEAR);
@@ -187,7 +206,13 @@ public class EditItem extends Fragment {
 
     }
 
-
+    /**
+     * Set the dataDapter of a Spinner and have it select a preselected position
+     * @param view the View the spinner is in
+     * @param spinner the spinner itselt
+     * @param stringArrayID ID of the string array for the spiiner in @/strings
+     * @param currentSelected  the position of the spinner
+     */
     private void setupSpinner(View view, Spinner spinner, int stringArrayID, int currentSelected) {
         List<String> list = new ArrayList<String>();
 
@@ -202,26 +227,6 @@ public class EditItem extends Fragment {
 
         spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
         spinner.setSelection(currentSelected);
-    }
-
-    private class CustomOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
-
-        public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) {
-
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> arg0) {
-            // TODO Auto-generated method stub
-
-        }
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -256,6 +261,18 @@ public class EditItem extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    private class CustomOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
+
+        public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) {
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> arg0) {
+            // TODO Auto-generated method stub
+
+        }
+    }
 
 
 }
