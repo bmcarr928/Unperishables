@@ -108,6 +108,27 @@ public class DataAccess {
     }
 
     /**
+     * Returns an items from the database
+     *
+     * @param String string name of  item to retrieve from the database
+     * @return Item(object) from the database
+     */
+    public Item queryForItemOfName(String itemName) {
+        db.beginTransaction();
+        String query = "SELECT * FROM " + Config.ITEM_TABLE_NAME + " WHERE " + Config.ITEM_NAME +
+                " = \"" + itemName + "\"";
+        Cursor queryResult = db.rawQuery(query, null);
+        db.endTransaction();
+
+        ArrayList<Item> itemList = getItemsFromCursor(queryResult);
+        if(itemList.size() == 0){
+            return null;
+        } else {
+            return itemList.get(0);
+        }
+    }
+
+    /**
      * Returns all items from a given Quantity
      *
      * @param quantity Quantity of items to retrieve from the database

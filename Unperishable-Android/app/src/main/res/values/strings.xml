@@ -18,6 +18,7 @@
     <string name="enter_owner_name">Enter Owner\'s name (if applicable)</string>
     <string name="add_item_button">Add Item</string>
     <string name="cancel_add_item_button">Cancel</string>
+    <string name="quantity">Quantity</string>
 
     <string-array name="quantities_array">
         <item>Out</item>
@@ -46,4 +47,5 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    <string name="category">Category</string>
 </resources>

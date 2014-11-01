@@ -37,6 +37,8 @@ public class Item {
      *
      * @param owner String name of the owner of an object
      * @return this item with an 'owner' attribute
+     *
+     * new Item(name, category, quantity).withOwner(owner);
      */
     public Item withOwner(String owner) {
         this.owner = owner;
@@ -48,6 +50,8 @@ public class Item {
      *
      * @param date Date object representing the time that an object expires
      * @return this item with an 'expirationDate' attribute
+     *
+     * new Item(name, category, quantity).withExpirationDate(date)
      */
     public Item withExpirationDate(Date date) {
         this.expirationDate = date;
