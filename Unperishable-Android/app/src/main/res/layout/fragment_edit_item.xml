@@ -1,7 +1,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:background='@android:color/holo_blue_light'>
+    style="@style/scrollbar_shape_style"
+    android:scrollbarAlwaysDrawHorizontalTrack="true"
+    >
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -10,7 +12,9 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center_horizontal|center_vertical"
-        tools:context="com.bmcarr.unperishable.view.EditItem">
+        android:background="@android:color/holo_blue_dark"
+        tools:context="com.bmcarr.unperishable.view.EditItem"
+        >
 
         <EditText
             android:id="@+id/editItem_name_edit"
@@ -19,11 +23,20 @@
             android:ems="10"
             android:hint="@string/enter_name"
             />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/quantity"
+            android:textSize="20sp"/>
         <Spinner
             android:id="@+id/editItem_quantity_spinner"
             android:layout_width="200dp"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:prompt="@string/quantity"/>
+            android:text="@string/category"
+            android:textSize="20sp"/>
         <Spinner
             android:id="@+id/editItem_category_spinner"
             android:layout_width="200dp"
@@ -34,7 +47,8 @@
             android:id="@+id/editItem_input_date_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/enter_input_date"/>
+            android:text="@string/enter_input_date"
+            android:textSize="20sp"/>
 
         <DatePicker
             android:id="@+id/editItem_input_date"
@@ -47,7 +61,8 @@
             android:id="@+id/editItem_expiration_date_picker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/enter_expiration_date"/>
+            android:text="@string/enter_expiration_date"
+            android:textSize="20sp"/>
 
         <DatePicker
             android:id="@+id/editItem_expiration_date"

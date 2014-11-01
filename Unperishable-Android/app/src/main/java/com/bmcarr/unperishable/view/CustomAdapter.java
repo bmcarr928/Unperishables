@@ -71,6 +71,7 @@ public class CustomAdapter extends BaseAdapter {
         } else if ( itemForPosition.getQuantity() == Config.Quantity.LOW ) {
             convertView.setBackgroundColor(Color.YELLOW);
         } else {
+
             convertView.setBackgroundColor(Color.GREEN);
         }
 
