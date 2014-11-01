@@ -18,6 +18,7 @@ import com.bmcarr.unperishable.data.Item;
 import com.bmcarr.unperishable.util.Config;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainActivity extends Activity implements AddItem.OnFragmentInteractionListener {
 
@@ -115,7 +116,9 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
                      mDrawerLayout.closeDrawer(mDrawerList);
                       break;
              case 2: fragmentManager = getFragmentManager();  //All Items
-                     fragmentManager.beginTransaction().replace(R.id.main_panel, InventoryFragment.getInstance(this.dataAccess.queryForAllItems())).commit();
+                     ArrayList<Item> itemList = this.dataAccess.queryForAllItems();
+                     Collections.sort(itemList);
+                     fragmentManager.beginTransaction().replace(R.id.main_panel, InventoryFragment.getInstance(itemList)).commit();
                      mDrawerList.setItemChecked(position, true);
                      mDrawerList.setSelection(position);
                      getActionBar().setTitle(mDrawerArray[position]);
