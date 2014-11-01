@@ -36,15 +36,6 @@ import java.util.List;
  *
  */
 public class AddItem extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
 
     private OnFragmentInteractionListener mListener;
 
@@ -65,16 +56,11 @@ public class AddItem extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment AddItem.
      */
-    // TODO: Rename and change types and number of parameters
-    public static AddItem newInstance(String param1, String param2) {
+    public static AddItem newInstance() {
         AddItem fragment = new AddItem();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -85,44 +71,41 @@ public class AddItem extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_add_item, container, false);
 
-        final View view = inflater.inflate(R.layout.fragment_add_item, container, false);
-
-
+        // get EditTexts
         itemNameEditText = (EditText) view.findViewById(R.id.name_edit);
         ownerEditText = (EditText) view.findViewById(R.id.owner);
+        // get Spinners
         categorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
         quantitySpinner = (Spinner) view.findViewById(R.id.quantity_spinner);
+        //set up Spinners to have the right options
+        setupSpinner(view,categorySpinner, R.array.categories_array);
+        setupSpinner(view, quantitySpinner,R.array.quantities_array);
+        // get DatePickers
         inputDatePicker = (DatePicker) view.findViewById(R.id.input_date);
         expirationDatePicker = (DatePicker) view.findViewById(R.id.expiration_date);
 
 
-        setupSpinner(view,categorySpinner, R.array.categories_array);
-        setupSpinner(view, quantitySpinner,R.array.quantities_array);
 
+        // button to add an item
         Button addButton = (Button) view.findViewById(R.id.finish_button);
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               String itemName =  itemNameEditText.getText().toString();
+                String owner = ownerEditText.getText().toString();
+                String itemName =  itemNameEditText.getText().toString();
                 int categoryPosition = categorySpinner.getSelectedItemPosition();
                 int quantityPosition = quantitySpinner.getSelectedItemPosition();
 
+                // must do this, going from java.util.Data to java.sql.Data types
                 GregorianCalendar inputCalendar = new GregorianCalendar(inputDatePicker.getYear(),
                         inputDatePicker.getMonth(), inputDatePicker.getDayOfMonth());
                 Date inputDate = new Date(inputCalendar.getTimeInMillis());
@@ -131,31 +114,28 @@ public class AddItem extends Fragment {
                         expirationDatePicker.getMonth(), expirationDatePicker.getDayOfMonth());
                 Date expirationDate = new Date(expirationCalendar.getTimeInMillis());
 
-                String owner = ownerEditText.getText().toString();
-
-
-
 
                 if (itemName.equals("")){
                     Toast.makeText(v.getContext(),"Requires Item Name", Toast.LENGTH_LONG).show();
                 }else {
-                    Item item = new Item(itemName ,Config.Category.getCategory(categoryPosition),
+                    Item addedItem = new Item(itemName ,Config.Category.getCategory(categoryPosition),
                             Config.Quantity.getQuantity(quantityPosition)).withInputDate(inputDate);
 
                     if(!owner.equals("")){
-                        item.withOwner(owner);
+                        addedItem.withOwner(owner);
 
                     }
                     if(inputDate.compareTo(expirationDate) != 0){
-                        item.withExpirationDate(expirationDate);
+                        addedItem.withExpirationDate(expirationDate);
 
                     }
                     DataAccess dataAccess = ((MainActivity) getActivity()).getDataAccess();
+
                     if (dataAccess.queryForItemOfName(itemName) != null){
                         Toast.makeText(v.getContext(),"Item of this name already exists", Toast.LENGTH_LONG).show();
                     }else {
                         //add item to database
-                        dataAccess.saveItem(item);
+                        dataAccess.saveItem(addedItem);
                         // switch to inv view
                         AddItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                                 InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
@@ -168,7 +148,7 @@ public class AddItem extends Fragment {
 
             }
         });
-
+        // button for backing out of this fragment
         Button cancelButton = (Button) view.findViewById(R.id.cancel_add_button);
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -182,6 +162,12 @@ public class AddItem extends Fragment {
         return view;
     }
 
+    /**
+     * Set the dataAdapter of a Spinner and have it add the correct Strings
+     * @param view the View the spinner is in
+     * @param spinner the spinner itself
+     * @param stringArrayID ID of the string array for the spinner in @/strings
+     */
     private void setupSpinner(View view, Spinner spinner, int stringArrayID) {
         List<String> list = new ArrayList<String>();
 
@@ -197,12 +183,6 @@ public class AddItem extends Fragment {
         spinner.setOnItemSelectedListener(new CustomOnItemSelectedListener());
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Activity activity) {

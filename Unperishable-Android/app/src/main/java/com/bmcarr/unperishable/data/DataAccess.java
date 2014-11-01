@@ -51,6 +51,12 @@ public class DataAccess {
         }
     }
 
+    /**
+     * Deletes the given item from the database.
+     *
+     * @param item Item to be deleted
+     * @return true, if item was deleted successfully, false otherwise
+     */
     public boolean deleteItem(Item item){
         db.beginTransaction();
         String query = String.format("DELETE" +" FROM " + Config.ITEM_TABLE_NAME + " WHERE " +
@@ -124,7 +130,7 @@ public class DataAccess {
     /**
      * Returns an items from the database
      *
-     * @param String string name of  item to retrieve from the database
+     * @param itemName String name of  item to retrieve from the database
      * @return Item(object) from the database
      */
     public Item queryForItemOfName(String itemName) {

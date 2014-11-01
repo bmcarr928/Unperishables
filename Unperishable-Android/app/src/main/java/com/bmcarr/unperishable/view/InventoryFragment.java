@@ -22,6 +22,7 @@ public class InventoryFragment extends Fragment {
     public static InventoryFragment getInstance(ArrayList<Item>itemList) {
         InventoryFragment fragment = new InventoryFragment();
         Bundle args = new Bundle();
+        // added sort
         Collections.sort(itemList);
         args.putSerializable(ITEMLIST, itemList);
         fragment.setArguments(args);
@@ -34,7 +35,7 @@ public class InventoryFragment extends Fragment {
         Bundle args = this.getArguments();
         this.itemList = (ArrayList<Item>) args.getSerializable(ITEMLIST);
 
-        View view = inflater.inflate(R.layout.inventory_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.fragment_inventory, container, false);
 
         final ListView theListView = (ListView) view.findViewById(R.id.inventory_list);
         List<Item> items = this.itemList;
@@ -48,12 +49,9 @@ public class InventoryFragment extends Fragment {
         theListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick( AdapterView<?> adapterView, View view, int position, long l){
-                // do something
+                // currently only opens EditItem fragment
                 InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                         EditItem.newInstance((Item) adapterView.getItemAtPosition(position))).commit();
-
-//                String itemPicked = "you selected " + String.valueOf(adapterView.getItemAtPosition(position));
-//                Toast.makeText(getActivity(), itemPicked, Toast.LENGTH_SHORT).show();
             }
         });
 

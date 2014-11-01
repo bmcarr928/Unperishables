@@ -102,7 +102,7 @@ public class EditItem extends Fragment {
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String owner = ownerEditText.getText().toString();
                 String updatedItemName =  itemNameEditText.getText().toString();
                 int categoryPosition = categorySpinner.getSelectedItemPosition();
                 int quantityPosition = quantitySpinner.getSelectedItemPosition();
@@ -115,10 +115,6 @@ public class EditItem extends Fragment {
                 GregorianCalendar expirationCalendar = new GregorianCalendar(expirationDatePicker.getYear(),
                         expirationDatePicker.getMonth(), expirationDatePicker.getDayOfMonth());
                 Date expirationDate = new Date(expirationCalendar.getTimeInMillis());
-
-                String owner = ownerEditText.getText().toString();
-
-
 
 
                 if (updatedItemName.equals("")){
