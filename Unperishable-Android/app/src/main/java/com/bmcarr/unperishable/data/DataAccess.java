@@ -52,6 +52,26 @@ public class DataAccess {
     }
 
     /**
+     * Deletes the given item from the database.
+     *
+     * @param item Item to be deleted
+     * @return true, if item was deleted successfully, false otherwise
+     */
+    public boolean deleteItem(Item item){
+        db.beginTransaction();
+        String query = String.format("DELETE" +" FROM " + Config.ITEM_TABLE_NAME + " WHERE " +
+                Config.ITEM_NAME + " = \"%s\"", item.getName());
+        Cursor queryResult = db.rawQuery(query, null);
+        db.endTransaction();
+        if (queryResult.getCount()==0) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
      * Returns all items in the database
      *
      * @return ArrayList consisting of all items that have been saved to the user's database
@@ -110,7 +130,7 @@ public class DataAccess {
     /**
      * Returns an items from the database
      *
-     * @param String string name of  item to retrieve from the database
+     * @param itemName String name of  item to retrieve from the database
      * @return Item(object) from the database
      */
     public Item queryForItemOfName(String itemName) {

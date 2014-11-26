@@ -7,12 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class InventoryFragment extends Fragment {
@@ -22,6 +22,8 @@ public class InventoryFragment extends Fragment {
     public static InventoryFragment getInstance(ArrayList<Item>itemList) {
         InventoryFragment fragment = new InventoryFragment();
         Bundle args = new Bundle();
+        // added sort
+        Collections.sort(itemList);
         args.putSerializable(ITEMLIST, itemList);
         fragment.setArguments(args);
         return fragment;
@@ -33,9 +35,9 @@ public class InventoryFragment extends Fragment {
         Bundle args = this.getArguments();
         this.itemList = (ArrayList<Item>) args.getSerializable(ITEMLIST);
 
-        View view = inflater.inflate(R.layout.inventory_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.fragment_inventory, container, false);
 
-        ListView theListView = (ListView) view.findViewById(R.id.inventory_list);
+        final ListView theListView = (ListView) view.findViewById(R.id.inventory_list);
         List<Item> items = this.itemList;
 
         CustomAdapter adapter = new CustomAdapter(getActivity(), items);
@@ -46,10 +48,10 @@ public class InventoryFragment extends Fragment {
         // probably change this from on click to on swipe?
         theListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
-            public void onItemClick( AdapterView<?> adapterView, View view, int i, long l){
-                // do something
-                String itemPicked = "you selected " + String.valueOf(adapterView.getItemAtPosition(i));
-                Toast.makeText(getActivity(), itemPicked, Toast.LENGTH_SHORT).show();
+            public void onItemClick( AdapterView<?> adapterView, View view, int position, long l){
+                // currently only opens EditItem fragment
+                InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+                        EditItem.newInstance((Item) adapterView.getItemAtPosition(position))).commit();
             }
         });
 

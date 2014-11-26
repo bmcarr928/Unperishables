@@ -10,7 +10,7 @@
     <string name="title_activity_login__fragment">Login_Fragment</string>
     <string name="enter_username">Enter username</string>
     <string name="enter_password">Enter password</string>
-    <!--<string name="hello_blank_fragment">Hello blank fragment</string>-->
+    <!-- <string name="hello_blank_fragment">Hello blank fragment</string> -->
     <string name="log_in">Log In</string>
     <string name="enter_name">Enter Item Name</string>
     <string name="enter_input_date">Enter Input Date:</string>
@@ -25,13 +25,11 @@
         <item>Low</item>
         <item>Stocked</item>
     </string-array>
-
     <string-array name="categories_array">
         <item>Refrigerator</item>
         <item>Pantry</item>
         <item>Spices</item>
     </string-array>
-
     <string-array name="option_array">
         <item>Add</item>
         <item>Grocery List</item>
@@ -43,9 +41,13 @@
         <item>Low</item>
         <item>Stocked</item>
     </string-array>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="category">Category</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="update_item_button">Update</string>
+
 </resources>

@@ -2,6 +2,7 @@ package com.bmcarr.unperishable.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
+import com.bmcarr.unperishable.util.Config;
 
 import java.util.List;
 
@@ -54,11 +56,24 @@ public class CustomAdapter extends BaseAdapter {
 
         ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
         TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
+        TextView txtCategory = (TextView) convertView.findViewById(R.id.category);
 
-        Item row_pos = items.get(position);
+        Item itemForPosition = items.get(position);
         // setting the image resource and title
 //        imgIcon.setImageResource(row_pos.getIcon());
-        txtTitle.setText(row_pos.getName());
+        txtTitle.setText(itemForPosition.getName());
+        txtTitle.setTextColor(Color.BLACK);
+        txtCategory.setText(itemForPosition.getCategory().getName());
+        txtCategory.setTextColor(Color.BLACK);
+
+        if ( itemForPosition.getQuantity() == Config.Quantity.OUT ) {
+            convertView.setBackgroundColor(Color.RED);
+        } else if ( itemForPosition.getQuantity() == Config.Quantity.LOW ) {
+            convertView.setBackgroundColor(Color.YELLOW);
+        } else {
+
+            convertView.setBackgroundColor(Color.GREEN);
+        }
 
         return convertView;
 

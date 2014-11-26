@@ -16,12 +16,21 @@
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
-        android:layout_toRightOf="@id/icon"
-        android:gravity="center_vertical"
+        android:gravity="center_vertical|center_horizontal"
         android:textColor="#000000"
         android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/category"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/title"
+        android:gravity="center_vertical|center_horizontal"
+        android:textColor="#000000"
+        android:textSize="10sp" />
 
 </RelativeLayout>
