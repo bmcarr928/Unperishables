@@ -1,11 +1,9 @@
 package com.bmcarr.unperishable.view;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +22,7 @@ import java.util.List;
 public class InventoryFragment extends Fragment {
     private static final String ITEMLIST = "itemList";
     private ArrayList<Item> itemList;
+    private int prevGroup = -1;
 
     public static InventoryFragment getInstance(ArrayList<Item>itemList) {
         InventoryFragment fragment = new InventoryFragment();
@@ -49,6 +48,16 @@ public class InventoryFragment extends Fragment {
         theListView.setAdapter(new ExpandableListAdapter(items));
         theListView.setGroupIndicator(null);
 
+
+        theListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if(prevGroup!= -1){
+                    theListView.collapseGroup(prevGroup);
+                }
+                prevGroup=groupPosition;
+            }
+        });
 
 
 
@@ -183,26 +192,7 @@ public class InventoryFragment extends Fragment {
             TextView text;
         }
     }
-    private class DeleteDialogFragment extends DialogFragment {
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the Builder class for convenient dialog construction
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Are you sure you would like to delete?")
-                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // FIRE ZE MISSILES!
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            // User cancelled the dialog
-                        }
-                    });
-            // Create the AlertDialog object and return it
-            return builder.create();
-        }
-    }
+
 
 
 }
