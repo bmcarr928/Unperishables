@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -96,11 +97,22 @@ public class InventoryFragment extends Fragment {
         }
 
         @Override
-        public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
             ViewHolder holder;
             if (convertView == null) {
                 convertView = inf.inflate(R.layout.list_item_child, parent, false);
+                Button updateButton = (Button) convertView.findViewById(R.id.update_button);
+
+                updateButton.setFocusable(false);
+
+                updateButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel, EditItem.newInstance(items.get(groupPosition))).commit();
+
+                    }
+                });
 
             }
 
@@ -134,7 +146,8 @@ public class InventoryFragment extends Fragment {
         private class ViewHolder {
             TextView text;
         }
-}
+    }
+
 }
 
 
