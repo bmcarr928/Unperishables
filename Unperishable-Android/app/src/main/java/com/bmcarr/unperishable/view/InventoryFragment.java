@@ -1,7 +1,11 @@
 package com.bmcarr.unperishable.view;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,6 +118,38 @@ public class InventoryFragment extends Fragment {
                     }
                 });
 
+                Button deleteButton = (Button) convertView.findViewById(R.id.delete_button);
+
+                deleteButton.setFocusable(false);
+
+                deleteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Delete")
+                                .setMessage("Are you sure you want to delete this entry?")
+                                .setPositiveButton("delete", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // continue with delete
+                                      ((MainActivity) getActivity()).getDataAccess().deleteItem(items.get(groupPosition));
+                                        InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+                                                InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+                                    }
+                                })
+                                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // do nothing
+                                    }
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .show();
+
+
+
+
+                    }
+                });
+
             }
 
             return convertView;
@@ -147,6 +183,27 @@ public class InventoryFragment extends Fragment {
             TextView text;
         }
     }
+    private class DeleteDialogFragment extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Are you sure you would like to delete?")
+                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // FIRE ZE MISSILES!
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            return builder.create();
+        }
+    }
+
 
 }
 
