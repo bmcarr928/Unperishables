@@ -160,17 +160,7 @@ public class EditItem extends Fragment {
             }
         });
 
-        // button for deleting items
-        Button deleteButton = (Button) view.findViewById(R.id.delete_button);
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).getDataAccess().deleteItem(oldItem);
-                EditItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
-                        InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
-            }
-        });
 
         // button for backing out of this fragment
         Button cancelButton = (Button) view.findViewById(R.id.editItem_cancel_add_button);
