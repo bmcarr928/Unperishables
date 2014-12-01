@@ -3,6 +3,9 @@ package com.bmcarr.unperishable.view;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
+import com.bmcarr.unperishable.util.Config;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -170,10 +174,20 @@ public class InventoryFragment extends Fragment {
 
             if (convertView == null) {
                 convertView = inf.inflate(R.layout.list_item_parent, parent, false);
-
+                Drawable d;
+                if(items.get(groupPosition).getQuantity() == Config.Quantity.LOW){
+                    d = getResources().getDrawable(R.drawable.yellow_horizontal_gradient);
+                }else if (items.get(groupPosition).getQuantity() == Config.Quantity.OUT){
+                    d = getResources().getDrawable(R.drawable.red_horizontal_gradient);
+                } else {
+                     d = getResources().getDrawable(R.drawable.green_horizontal_gradient);
+                }
+                convertView.setBackground(d);
                 holder = new ViewHolder();
                 holder.text = (TextView) convertView.findViewById(R.id.item_name);
                 convertView.setTag(holder);
+
+
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
