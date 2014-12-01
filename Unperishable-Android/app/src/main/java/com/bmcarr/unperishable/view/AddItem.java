@@ -154,6 +154,7 @@ public class AddItem extends Fragment {
                         dataAccess.saveItem(addedItem);
                         // switch to inv view
                         AddItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+
                                 InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
                     }
                 }
