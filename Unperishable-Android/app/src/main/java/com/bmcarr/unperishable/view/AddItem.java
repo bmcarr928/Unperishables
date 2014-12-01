@@ -19,8 +19,13 @@ import android.widget.Toast;
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.DataAccess;
 import com.bmcarr.unperishable.data.Item;
+import com.bmcarr.unperishable.util.ApiRequestTask;
 import com.bmcarr.unperishable.util.Config;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.MalformedURLException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -139,7 +144,40 @@ public class AddItem extends Fragment {
                         // switch to inv view
                         AddItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                                 InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+                        JSONObject obj = new JSONObject();
+                        try {
+                            obj.put("owner", owner);
+                            obj.put("name", itemName);
+                            obj.put("category", categoryPosition);
+                            obj.put("quantity", quantityPosition);
+                            obj.put("input_date", inputCalendar.getTimeInMillis());
+                            obj.put("expiration_date", expirationCalendar.getTimeInMillis());
+
+                            ApiRequestTask art = ApiRequestTask.createPostRequest("api/additem", ApiRequestTask.RequestType.POST_ONLY,
+                                    null, obj);
+                            Thread t = new Thread(art);
+                            t.start();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        }
+
                     }
+
+//                    String owner = ownerEditText.getText().toString();
+//                    String itemName =  itemNameEditText.getText().toString();
+//                    int categoryPosition = categorySpinner.getSelectedItemPosition();
+//                    int quantityPosition = quantitySpinner.getSelectedItemPosition();
+//
+//                    // must do this, going from java.util.Data to java.sql.Data types
+//                    GregorianCalendar inputCalendar = new GregorianCalendar(inputDatePicker.getYear(),
+//                            inputDatePicker.getMonth(), inputDatePicker.getDayOfMonth());
+//                    Date inputDate = new Date(inputCalendar.getTimeInMillis());
+//
+//                    GregorianCalendar expirationCalendar = new GregorianCalendar(expirationDatePicker.getYear(),
+//                            expirationDatePicker.getMonth(), expirationDatePicker.getDayOfMonth());
+//                    Date expirationDate = new Date(expirationCalendar.getTimeInMillis());
                 }
 
 
