@@ -39,7 +39,7 @@ public class EditItem extends Fragment {
     private Spinner categorySpinner;
     private Spinner quantitySpinner;
     private int inputYear, inputMonth, inputDay;
-    private int expYear =0, expMonth=0, expDay =0;
+    private int expYear, expMonth, expDay;
     private TextView inputDate;
     private TextView experationDate;
 
@@ -93,6 +93,11 @@ public class EditItem extends Fragment {
             expMonth = cal.get(Calendar.MONTH);
             expDay = cal.get(Calendar.DAY_OF_MONTH);
             experationDate.setText((expMonth + 1) + "-" + expDay + "-" + expYear);
+        } else {
+            Calendar cal = Calendar.getInstance();
+            expYear = cal.get(Calendar.YEAR);
+            expMonth = cal.get(Calendar.MONTH);
+            expDay = cal.get(Calendar.DAY_OF_MONTH);
         }
 
         // get EditTexts and update them with info in oldItem
@@ -219,7 +224,7 @@ public class EditItem extends Fragment {
                                 // Display Selected date in textbox
                                 inputDate.setText((monthOfYear + 1) + "-"+ dayOfMonth + "-" + year);
                                 inputYear = year;
-                                inputMonth = monthOfYear + 1;
+                                inputMonth = monthOfYear;
                                 inputDay = dayOfMonth;
 
                             }
@@ -259,7 +264,7 @@ public class EditItem extends Fragment {
                                 // Display Selected date in textbox
                                 experationDate.setText((monthOfYear + 1) + "-"+ dayOfMonth + "-" + year);
                                 expYear = year;
-                                expMonth = monthOfYear + 1;
+                                expMonth = monthOfYear;
                                 expDay = dayOfMonth;
                             }
                         }, expYear, expMonth, expDay);
