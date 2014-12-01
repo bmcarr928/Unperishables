@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.bmcarr.unperishable.R;
@@ -17,7 +16,7 @@ import com.bmcarr.unperishable.R;
  * create an instance of this fragment.
  *
  */
-public class LoginFragment extends Fragment {
+public class CreateAccount extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -44,9 +43,7 @@ public class LoginFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-    public LoginFragment() {
-        // Required empty public constructor
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,30 +54,15 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
+        View view = inflater.inflate(R.layout.fragment_create_account, container, false);
 
-        this.usernameField = (EditText) view.findViewById(R.id.txtUsername);
-        this.passwordField = (EditText) view.findViewById(R.id.txtUsername);
+        EditText username = (EditText) view.findViewById(R.id.createAcct_username);
+        EditText psw = (EditText) view.findViewById(R.id.createAcct_pwd);
+        EditText cpsw = (EditText) view.findViewById(R.id.createAcct_pwd_confirm);
+        EditText email = (EditText) view.findViewById(R.id.createAcct_email);
+        EditText cemail = (EditText) view.findViewById(R.id.createAcct_email_confirm);
 
-        Button loginButton = (Button) view.findViewById(R.id.login_button);
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity)LoginFragment.this.getActivity()).loginUser(LoginFragment.this.usernameField.getText().toString());
-            }
-        });
-
-        Button createAccountButton = (Button) view.findViewById(R.id.create_account_button);
-
-        createAccountButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LoginFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
-
-                        new CreateAccount()).commit();
-            }
-        });
+        
 
 
         return view;
