@@ -52,6 +52,7 @@ public class InventoryFragment extends Fragment {
                 // currently only opens EditItem fragment
                 InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                         EditItem.newInstance((Item) adapterView.getItemAtPosition(position))).commit();
+                getActivity().getActionBar().setTitle(R.string.edit_item);
             }
         });
 

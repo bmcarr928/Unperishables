@@ -139,6 +139,7 @@ public class AddItem extends Fragment {
                         // switch to inv view
                         AddItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                                 InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+                        getActivity().getActionBar().setTitle(R.string.all_items);
                     }
                 }
 
@@ -156,6 +157,7 @@ public class AddItem extends Fragment {
             public void onClick(View v) {
                 AddItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                         InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+                getActivity().getActionBar().setTitle(R.string.all_items);
             }
         });
 

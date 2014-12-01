@@ -156,6 +156,7 @@ public class EditItem extends Fragment {
 
                     EditItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                             InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+                    getActivity().getActionBar().setTitle(R.string.all_items);;
                 }
             }
         });
@@ -169,6 +170,7 @@ public class EditItem extends Fragment {
                 ((MainActivity) getActivity()).getDataAccess().deleteItem(oldItem);
                 EditItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                         InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+                getActivity().getActionBar().setTitle(R.string.all_items);;
             }
         });
 
@@ -181,6 +183,7 @@ public class EditItem extends Fragment {
 
                 EditItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                         InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+                getActivity().getActionBar().setTitle(R.string.all_items);
             }
         });
 
