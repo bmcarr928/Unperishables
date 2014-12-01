@@ -25,6 +25,8 @@ public class InventoryFragment extends Fragment {
     private static final String ITEMLIST = "itemList";
     private ArrayList<Item> itemList;
     private int prevGroup = -1;
+    private Item itemSelected;
+    private TextView childView;
 
     public static InventoryFragment getInstance(ArrayList<Item>itemList) {
         InventoryFragment fragment = new InventoryFragment();
@@ -56,7 +58,9 @@ public class InventoryFragment extends Fragment {
             public void onGroupExpand(int groupPosition) {
                 if(prevGroup!= -1){
                     theListView.collapseGroup(prevGroup);
+
                 }
+
                 prevGroup=groupPosition;
             }
         });
@@ -114,9 +118,12 @@ public class InventoryFragment extends Fragment {
         @Override
         public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
-            ViewHolder holder;
-            if (convertView == null) {
+
                 convertView = inf.inflate(R.layout.list_item_child, parent, false);
+
+
+                childView = (TextView) convertView.findViewById(R.id.childTextView);
+                childView.setText(stringParceItem(items.get(groupPosition)));
                 Button updateButton = (Button) convertView.findViewById(R.id.update_button);
 
                 updateButton.setFocusable(false);
@@ -161,9 +168,21 @@ public class InventoryFragment extends Fragment {
                     }
                 });
 
-            }
+
 
             return convertView;
+        }
+
+        private String stringParceItem(Item item){
+            String toReturn = "";
+            if(!item.getOwner().equals("")){
+                toReturn = "Owner: " + item.getOwner();
+            }
+            toReturn = toReturn + "\nCategory " + item.getCategory().toString() + "\nInput Date: " + item.getInputDate().toString();
+            if(item.getExpirationDate() != null){
+                toReturn = toReturn + "Expiration Date " + item.getExpirationDate().toString();
+            }
+            return toReturn;
         }
 
         @Override
