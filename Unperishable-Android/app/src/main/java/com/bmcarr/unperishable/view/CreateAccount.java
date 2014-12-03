@@ -78,9 +78,7 @@ public class CreateAccount extends Fragment implements Observer {
         this.email = (EditText) view.findViewById(R.id.createAcct_email);
         this.cemail = (EditText) view.findViewById(R.id.createAcct_email_confirm);
 
-
         Button createUser = (Button) view.findViewById(R.id.createAcct_createButton);
-
         createUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
