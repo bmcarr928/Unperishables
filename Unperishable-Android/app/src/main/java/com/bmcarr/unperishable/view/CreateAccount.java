@@ -186,14 +186,19 @@ public class CreateAccount extends Fragment implements Observer {
     @Override
     public void update(Observable observable, Object data) {
         MainActivity mainActivity = (MainActivity)this.getActivity();
-        CreateAccountTask createAccountTask = (CreateAccountTask)observable;
+        final CreateAccountTask createAccountTask = (CreateAccountTask)observable;
         if ( createAccountTask.getResponseCode() == 403 ) {
             Log.d(TAG, "403 response code");
             mainActivity.runOnUiThread(new ToastMaker("Error, username already exists"));
         } else if ( createAccountTask.getResponseCode() != 200 ) {
             mainActivity.runOnUiThread(new ToastMaker("Error communicating with the server"));
         } else {
-            //login
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((MainActivity)CreateAccount.this.getActivity()).loginUser(createAccountTask.getUsername());
+                }
+            });
         }
     }
 

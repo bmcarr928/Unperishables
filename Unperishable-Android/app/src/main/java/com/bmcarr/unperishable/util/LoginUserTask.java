@@ -3,8 +3,6 @@ package com.bmcarr.unperishable.util;
 import android.app.ProgressDialog;
 import android.util.Log;
 
-import com.bmcarr.unperishable.data.Item;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-public class CreateAccountTask extends Observable implements Runnable {
+public class LoginUserTask extends Observable implements Runnable {
 
     private static final String TAG = "AddItemTask";
     private String username;
@@ -20,7 +18,7 @@ public class CreateAccountTask extends Observable implements Runnable {
     private ProgressDialog progressDialog;
     private int responseCode;
 
-    public CreateAccountTask(String username, String password, ProgressDialog progressDialog) {
+    public LoginUserTask(String username, String password, ProgressDialog progressDialog) {
         this.username = username;
         this.password = password;
         this.progressDialog = progressDialog;
@@ -31,7 +29,7 @@ public class CreateAccountTask extends Observable implements Runnable {
 
         Log.d(TAG, "SyncDbTask Running...");
         ApiRequestTask requestTask;
-        String relativeUrl = "/api/adduser/";
+        String relativeUrl = "/api/loginuser/";
         List<String> headers = new ArrayList<String>();
 
         JSONObject body = new JSONObject();
