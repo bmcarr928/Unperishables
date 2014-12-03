@@ -1,13 +1,12 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="android:Theme.Holo">
+        <item name="android:windowBackground">@drawable/dark_background</item>
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
-    <style name="add_edit_style" parent="AppTheme">
-        <item name="android:padding">20dp</item>
-        <item name="android:background">@android:color/holo_orange_light</item>
-      </style>
+
 
 
     <style name="scrollbar_shape_style">
