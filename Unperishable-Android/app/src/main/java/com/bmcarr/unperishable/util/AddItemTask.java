@@ -2,14 +2,11 @@ package com.bmcarr.unperishable.util;
 
 import android.util.Log;
 
-import com.bmcarr.unperishable.data.DataAccess;
 import com.bmcarr.unperishable.data.Item;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;

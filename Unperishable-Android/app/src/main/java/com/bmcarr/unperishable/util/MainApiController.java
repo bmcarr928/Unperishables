@@ -1,8 +1,8 @@
 //package com.bmcarr.unperishable.util;
 //
 ///**
-// * Created by jeff on 12/1/14.
-// */
+//* Created by jeff on 12/1/14.
+//*/
 //
 //import java.net.URL;
 //
@@ -26,16 +26,16 @@
 //import java.util.List;
 //
 ///**
-// * The MainApiController is the primary interface between the server API and
-// * the application, and also manages all login credentials and authorization
-// * tokens. It manages the individual calls to the server and returns their
-// * responses to the auxiliary API classes in the form of files, JSON constructs,
-// * etc. It also handles the caching and persisting of user credentials
-// * in the form of instance variables and a local file, respectively.
-// *
-// * @author ElegantThought
-// *
-// */
+//* The MainApiController is the primary interface between the server API and
+//* the application, and also manages all login credentials and authorization
+//* tokens. It manages the individual calls to the server and returns their
+//* responses to the auxiliary API classes in the form of files, JSON constructs,
+//* etc. It also handles the caching and persisting of user credentials
+//* in the form of instance variables and a local file, respectively.
+//*
+//* @author ElegantThought
+//*
+//*/
 //public class MainApiController {
 //
 //    private static final String SERVER_URL = "http://unperishables.bmcarr.com/";
