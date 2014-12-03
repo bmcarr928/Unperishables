@@ -1,6 +1,5 @@
 package com.bmcarr.unperishable.view;
 
-import android.animation.ObjectAnimator;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -77,14 +76,13 @@ public class LoginFragment extends Fragment implements Observer {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /* Make sure the name and password are not empty before allowing access */
-                if(!emptyLoginFields()) {
 
+                if(!emptyFields()){
                     ProgressDialog progressDialog = ProgressDialog.show(LoginFragment.this.getActivity(),
-                            "Creating Account", "Please wait...");
+                            "Logging In", "Please wait...");
                     progressDialog.setCancelable(true);
                     LoginUserTask createAccountTask = new LoginUserTask(usernameField.getText().toString(),
-                            passwordField.getText().toString(), progressDialog);
+                          passwordField.getText().toString(), progressDialog);
                     createAccountTask.addObserver(LoginFragment.this);
                     Thread t = new Thread(createAccountTask);
                     t.start();
@@ -93,64 +91,31 @@ public class LoginFragment extends Fragment implements Observer {
         });
 
         Button createAccountButton = (Button) view.findViewById(R.id.create_account_button);
-
         createAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LoginFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
-
-                        new CreateAccount()).commit();
+                LoginFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel, new CreateAccount()).commit();
             }
         });
-
-
         return view;
     }
 
-    /**
-     * Check to see if either the username or password login field are empty.
-     * If they are the it alerts the user through a toast, color change and
-     * changes to focus to the first field that is empty.
-     *
-     * @return true if any of the login fields are empty
-     *         false neither of the fields are empty
-     *
-     */
-    private boolean emptyLoginFields() {
-        boolean emptyField = false;
-        StringBuilder stringBuilder = new StringBuilder(); // used for building error string
-        String username = usernameField.getText().toString();
-        String password = passwordField.getText().toString();
+    private void clearErrors() {
+        usernameField.setError(null);
+        passwordField.setError(null);
+    }
 
+    private boolean emptyFields() {
         /* Test if the username field is empty */
-        if(TextUtils.isEmpty(username)) {
-            stringBuilder.append("Please enter a username");
+        if(TextUtils.isEmpty(usernameField.getText().toString())) {
+            usernameField.setError("Please enter a username");
             usernameField.requestFocus();
-            /*TODO: Change this to background color transitions instead of alpha*/
-            /* Haven't figured out how to do this on the background with color yet */
-            ObjectAnimator usernameHighlight = ObjectAnimator.ofFloat(usernameField, "alpha", 0f, 1f);
-            usernameHighlight.setDuration(1000);
-            usernameHighlight.start();
-            emptyField = true;
+            return true;
         }
         /* Test if the password field is empty */
-        if(TextUtils.isEmpty(password)) {
-            if(emptyField) { // User name is empty as well
-                stringBuilder.append(" & password");
-            } else { // Just password
-                stringBuilder.append("Please enter a password");
-                passwordField.requestFocus();
-                emptyField = true;
-            }
-            /*TODO: Change this to background color transitions instead of alpha*/
-            /* Haven't figured out how to do this on the background with color yet */
-            ObjectAnimator passwordHighlight = ObjectAnimator.ofFloat(passwordField, "alpha", 0f, 1f);
-            passwordHighlight.setDuration(1000);
-            passwordHighlight.start();
-        }
-        /* If either field is empty then show an error as a Toast */
-        if(emptyField) {
-            Toast.makeText(getActivity(), stringBuilder.toString(), Toast.LENGTH_SHORT).show();
+        if(TextUtils.isEmpty(passwordField.getText().toString())) {
+            passwordField.setError("Please enter a password");
+            passwordField.requestFocus();
             return true;
         }
         return false;
@@ -195,3 +160,4 @@ public class LoginFragment extends Fragment implements Observer {
     }
 
 }
+

@@ -71,7 +71,6 @@ public class CreateAccount extends Fragment implements Observer {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_account, container, false);
 
-
         this.username = (EditText) view.findViewById(R.id.createAcct_username);
         this.psw = (EditText) view.findViewById(R.id.createAcct_pwd);
         this.cpsw = (EditText) view.findViewById(R.id.createAcct_pwd_confirm);
