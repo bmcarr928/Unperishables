@@ -65,8 +65,10 @@ public class SyncDbTask extends Observable implements Runnable {
                     if (items.length() == 0) {
                         System.out.println("Could not get JSON object from HTTP request");
                     } else {
+                        ArrayList<String> names = new ArrayList<String>();
                         for (int i = 0; i < items.length(); i++) {
                             JSONObject obj = ((JSONObject) items.get(i)).getJSONObject("fields");
+                            names.add(obj.getString("name"));
                             if (dataAccess.queryForItemOfName(obj.getString("name")) == null) {
                                 dataSetChanged = true;
 
@@ -84,6 +86,19 @@ public class SyncDbTask extends Observable implements Runnable {
                                 item = item.withOwner(owner);
 
                                 this.dataAccess.saveItem(item);
+                            }
+                        }
+                        ArrayList<Item> itemlist = dataAccess.queryForAllItems();
+                        for ( Item i : itemlist ) {
+                            boolean found = false;
+                            for ( String s : names ) {
+                                if ( i.getName().equals(s) ) {
+                                    found = true;
+                                }
+                            }
+                            if ( !found ) {
+                                dataAccess.deleteItem(i);
+                                dataSetChanged = true;
                             }
                         }
                         Log.d(TAG, "dataSetChanged = " + dataSetChanged);

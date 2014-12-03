@@ -18,7 +18,9 @@ import android.widget.TextView;
 
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
+import com.bmcarr.unperishable.util.AddItemTask;
 import com.bmcarr.unperishable.util.Config;
+import com.bmcarr.unperishable.util.DeleteItemTask;
 import com.bmcarr.unperishable.util.SyncDbTask;
 
 import java.util.ArrayList;
@@ -203,6 +205,9 @@ public class InventoryFragment extends Fragment implements Observer {
             .setPositiveButton("delete", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     // continue with delete
+                    DeleteItemTask deleteItemTask = new DeleteItemTask(Config.currentDataAccess.getLoggedInUser(), parents.get(groupPosition).getItem());
+                    Thread t = new Thread(deleteItemTask);
+                    t.start();
                     ((MainActivity) getActivity()).getDataAccess().deleteItem(parents.get(groupPosition).getItem());
                     InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                             InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
