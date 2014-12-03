@@ -79,7 +79,10 @@ public class CreateAccount extends Fragment {
                 clearErrors();
                 if(emptyFields()) {
                     // One or more of the fields were empty. Error message comes form emptyFields()
-                }else if (!fieldsMatch(psw, cpsw)) {
+                } else if (!isEmailValid(email.getText().toString())) {
+                    email.requestFocus();
+                    email.setError("Not a valid email address");
+                } else if (!fieldsMatch(psw, cpsw)) {
                     psw.getText().clear();
                     cpsw.getText().clear();
                     psw.setError("Passwords don't match");
@@ -87,7 +90,7 @@ public class CreateAccount extends Fragment {
                     cemail.getText().clear();
                     cemail.setError("Emails don't match");
                 } else if (existingUser()) {
-                    Toast toast= Toast.makeText(getActivity(), "User Already Exist!", Toast.LENGTH_SHORT);
+                    Toast toast= Toast.makeText(getActivity(), "User already exist!", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, -50);
                     toast.show();
                 } else {
@@ -104,6 +107,10 @@ public class CreateAccount extends Fragment {
         cpsw.setError(null);
         email.setError(null);
         cemail.setError(null);
+    }
+
+    boolean isEmailValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private boolean emptyFields() {
