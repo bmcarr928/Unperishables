@@ -1,11 +1,14 @@
 package com.bmcarr.unperishable.util;
 
+import com.bmcarr.unperishable.data.DataAccess;
+
 /**
  * Configuration class that holds constants and enums that will be used in more than one file
  */
 public class Config {
 
     private static String TAG = "Config";
+    public static DataAccess currentDataAccess;
 
     // Table name
     public static final String ITEM_TABLE_NAME = "kitchen_store";
@@ -74,6 +77,5 @@ public class Config {
             throw new IllegalArgumentException("Integer " + id + " does not map to a Quantity");
         }
     }
-
 
 }
