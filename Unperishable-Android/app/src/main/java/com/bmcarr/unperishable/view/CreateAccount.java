@@ -62,7 +62,7 @@ public class CreateAccount extends Fragment {
         EditText email = (EditText) view.findViewById(R.id.createAcct_email);
         EditText cemail = (EditText) view.findViewById(R.id.createAcct_email_confirm);
 
-        
+
 
 
         return view;
