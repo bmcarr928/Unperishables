@@ -1,15 +1,23 @@
 package com.bmcarr.unperishable.view;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
+import com.bmcarr.unperishable.util.CreateAccountTask;
+import com.bmcarr.unperishable.util.LoginUserTask;
+
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,10 +26,7 @@ import com.bmcarr.unperishable.R;
  * create an instance of this fragment.
  *
  */
-public class LoginFragment extends Fragment {
-
-    private static final String TAG = "Login";
-
+public class LoginFragment extends Fragment implements Observer {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -72,16 +77,15 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                clearErrors();
                 if(!emptyFields()){
-                  if (existingUser()) {
-                      // Not sure what to do with this
-                      ((MainActivity)LoginFragment.this.getActivity()).loginUser(LoginFragment.this.usernameField.getText().toString());
-                        // TODO: Log user in
-                  } else {
-                      usernameField.requestFocus();
-                      usernameField.setError("User doesn't exist!");
-                  }
+                    ProgressDialog progressDialog = ProgressDialog.show(LoginFragment.this.getActivity(),
+                            "Logging In", "Please wait...");
+                    progressDialog.setCancelable(true);
+                    LoginUserTask createAccountTask = new LoginUserTask(usernameField.getText().toString(),
+                          passwordField.getText().toString(), progressDialog);
+                    createAccountTask.addObserver(LoginFragment.this);
+                    Thread t = new Thread(createAccountTask);
+                    t.start();
                 }
             }
         });
@@ -116,15 +120,44 @@ public class LoginFragment extends Fragment {
         }
         return false;
     }
-    private boolean existingUser() {
-        boolean userExist = true;
-        // TODO: Check if user exist here
 
-        // The if is just for testing
-        if(userExist) {
-            return true;
+    @Override
+    public void update(Observable observable, Object data) {
+        MainActivity mainActivity = (MainActivity)this.getActivity();
+        final LoginUserTask loginUserTask = (LoginUserTask)observable;
+        if ( loginUserTask.getResponseCode() == 403 ) {
+            mainActivity.runOnUiThread(new ToastMaker("Error, username/password combo invalid"));
+        } else if ( loginUserTask.getResponseCode() != 200 ) {
+            mainActivity.runOnUiThread(new ToastMaker("Error communicating with the server"));
+        } else {
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((MainActivity)LoginFragment.this.getActivity()).loginUser(loginUserTask.getUsername());
+                }
+            });
         }
-        return false;
     }
+
+    private class ToastMaker implements Runnable {
+
+        String message;
+
+        ToastMaker(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public void run() {
+            MainActivity mainActivity = (MainActivity)LoginFragment.this.getActivity();
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(LoginFragment.this.getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
 }
 
