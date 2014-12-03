@@ -9,7 +9,7 @@ public class Child {
     private String info;
     public Child(Item item){
         info = "";
-        if(!item.getOwner().equals("")){
+        if(item.getOwner() != null){
             info = "Owner: " + item.getOwner();
         }
         info = info + "\nCategory " + item.getCategory().toString() + "\nInput Date: " + item.getInputDate().toString();

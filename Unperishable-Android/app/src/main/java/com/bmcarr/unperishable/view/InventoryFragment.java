@@ -68,11 +68,14 @@ public class InventoryFragment extends Fragment{
     }
 
     private ArrayList<Parent> createGroups(){
+
         ArrayList<Parent> toReturn = new ArrayList<Parent>();
-        for( int i =0; i < itemList.size(); i ++){
-            toReturn.add(new Parent(itemList.get(i), new Child(itemList.get(i))));
-        }
-        return toReturn;
+            for (int i = 0; i < itemList.size(); i++) {
+                toReturn.add(new Parent(itemList.get(i), new Child(itemList.get(i))));
+            }
+
+            return toReturn;
+
     }
 
     private class CustomExpandableListAdapter extends BaseExpandableListAdapter {
