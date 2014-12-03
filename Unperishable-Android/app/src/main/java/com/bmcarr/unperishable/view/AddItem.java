@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.DataAccess;
 import com.bmcarr.unperishable.data.Item;
+import com.bmcarr.unperishable.util.AddItemTask;
 import com.bmcarr.unperishable.util.ApiRequestTask;
 import com.bmcarr.unperishable.util.Config;
 
@@ -154,7 +155,7 @@ public class AddItem extends Fragment {
 
                     if (dataAccess.queryForItemOfName(itemName) != null){
                         Toast.makeText(v.getContext(),"Item of this name already exists", Toast.LENGTH_LONG).show();
-                    }else {
+                    } else {
                         //add item to database
                         dataAccess.saveItem(addedItem);
                         // switch to inv view
@@ -162,23 +163,9 @@ public class AddItem extends Fragment {
 
                                 InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
                         JSONObject obj = new JSONObject();
-                        try {
-                            obj.put("owner", owner);
-                            obj.put("name", itemName);
-                            obj.put("category", categoryPosition);
-                            obj.put("quantity", quantityPosition);
-                            obj.put("input_date", inputCalendar.getTimeInMillis());
-                            obj.put("expiration_date", expirationCalendar.getTimeInMillis());
-
-                            ApiRequestTask art = ApiRequestTask.createPostRequest("api/additem", ApiRequestTask.RequestType.POST_ONLY,
-                                    null, obj);
-                            Thread t = new Thread(art);
-                            t.start();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        }
+                        AddItemTask addItemTask = new AddItemTask(dataAccess.getLoggedInUser(), addedItem);
+                        Thread t = new Thread(addItemTask);
+                        t.start();
 
                     }
 

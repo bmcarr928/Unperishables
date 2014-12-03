@@ -207,7 +207,9 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
         * Manually generated values used for testing out display of different queries
         * Feel free to delete hard coded adds when you get add fragment working properly.
         * */
+
         this.dataAccess = new DataAccess(this.getApplicationContext(), username);
+        Config.currentDataAccess = this.dataAccess;
 
 
         this.dataAccess.saveItem(new Item("Salt", Config.Category.SPICE, Config.Quantity.OUT)

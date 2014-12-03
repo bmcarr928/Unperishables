@@ -44,7 +44,7 @@ public class ApiRequestTask implements Runnable {
 
     public static final String TAG = "APIRequestTask";
     public static enum RequestType {
-        JSON_OBJECT, JSON_ARRAY, JSON_READER, SAVE_TO_DISK, POST_ONLY
+        JSON_OBJECT, JSON_ARRAY, JSON_READER, PLAIN_TEXT, SAVE_TO_DISK, POST_ONLY
     }
 
     private URL url;
@@ -59,26 +59,27 @@ public class ApiRequestTask implements Runnable {
     private JSONArray retrievedArray = null;
     private JSONObject retrievedObject = null;
     private JsonReader retrievedReader = null;
+    private String plainText = "";
 
     public static enum RequestMethod {
         POST, GET
     }
 
-    private static final String SERVER_URL = "http://unperishables.bmcarr.com/";
+    private static final String SERVER_URL = "http://unperishables.bmcarr.com";
 
 
 
     /**
      * Creates an HTTP GET request task.
      *
-     * @param url URL object to which to issue the request
      * @param requestType Determines how the response body will be interpreted
      * @param headers Headers to attach to the request
      *
      * @return A new ApiRequestTask object
      */
-    public static ApiRequestTask createGetRequest(URL url, RequestType requestType, List<String> headers) {
-        return new ApiRequestTask(url, requestType, RequestMethod.GET, headers, null, null);
+    public static ApiRequestTask createGetRequest(String relativeUrl, RequestType requestType, List<String> headers) throws MalformedURLException {
+        URL url = new URL(SERVER_URL);
+        return new ApiRequestTask(new URL(url, relativeUrl), requestType, RequestMethod.GET, headers, null, null);
     }
 
     /**
@@ -189,6 +190,10 @@ public class ApiRequestTask implements Runnable {
                 inputStream = connection.getInputStream();
                 this.retrievedReader = new JsonReader(new InputStreamReader(inputStream));
                 break;
+            case PLAIN_TEXT:
+                inputStream = connection.getInputStream();
+                this.plainText = getStringFromStream(inputStream);
+                break;
             case SAVE_TO_DISK:
                 break;
             case POST_ONLY:
@@ -281,6 +286,10 @@ public class ApiRequestTask implements Runnable {
 
     public JsonReader getRetrievedReader() {
         return retrievedReader;
+    }
+
+    public String getRetrievedText() {
+        return plainText;
     }
 
 }
