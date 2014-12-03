@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="out_dark_red">#920700</color>
+    <color name="out_light_red">#B10900</color>
+    <color name="out_red">#D10A00</color>
+
+    <color name="stocked_dark_green">#0D8B00</color>
+    <color name="stocked_green">#10A600</color>
+    <color name="stocked_light_green">#13C800</color>
+
+    <color name="stocked_dark_yellow">#BB9B00</color>
+    <color name="stocked_yellow">#E0BA00</color>
+    <color name="stocked_light_yellow">#FFD718</color>
+</resources>
