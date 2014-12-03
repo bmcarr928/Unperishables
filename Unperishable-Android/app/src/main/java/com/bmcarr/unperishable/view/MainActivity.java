@@ -26,6 +26,7 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private DataAccess dataAccess;
+    private int currentPosition;
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -36,6 +37,8 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // TODO change this when merging with drawer stuff
+        this.currentPosition = 2;
 
         mDrawerArray = getResources().getStringArray(R.array.option_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -89,6 +92,7 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            MainActivity.this.currentPosition = position;
             selectItem(position);
         }
     }
@@ -103,8 +107,9 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
     * */
 
      @SuppressWarnings("ConstantConditions")
-     private void selectItem(int position) {
+     public void selectItem(int position) {
         FragmentManager fragmentManager;
+        this.currentPosition = position;
 
         switch (position){
 
@@ -202,36 +207,16 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
     }
 
     public void loginUser(String username) {
-        /*
-        * Manually generated values used for testing out display of different queries
-        * Feel free to delete hard coded adds when you get add fragment working properly.
-        * */
+
         this.dataAccess = new DataAccess(this.getApplicationContext(), username);
-
-
-        this.dataAccess.saveItem(new Item("Salt", Config.Category.SPICE, Config.Quantity.OUT)
-                .withOwner("Bob"));
-        this.dataAccess.saveItem(new Item("Butter", Config.Category.REFRIGERATOR, Config.Quantity.OUT)
-                .withOwner("Bob"));
-        this.dataAccess.saveItem(new Item("Cumin", Config.Category.SPICE, Config.Quantity.OUT)
-                .withOwner("Bob"));
-        this.dataAccess.saveItem(new Item("Bacon", Config.Category.REFRIGERATOR, Config.Quantity.LOW)
-                .withOwner("Bob"));
-        this.dataAccess.saveItem(new Item("Pasta", Config.Category.PANTRY, Config.Quantity.LOW)
-                .withOwner("Bob"));
-        this.dataAccess.saveItem(new Item("Rice", Config.Category.PANTRY, Config.Quantity.LOW)
-                .withOwner("Bob"));
-        this.dataAccess.saveItem(new Item("Milk", Config.Category.REFRIGERATOR, Config.Quantity.STOCKED)
-                .withOwner("Bob"));
-        this.dataAccess.saveItem(new Item("Chips", Config.Category.PANTRY, Config.Quantity.STOCKED)
-                .withOwner("Bob"));
-        this.dataAccess.saveItem(new Item("Tomatoes", Config.Category.REFRIGERATOR, Config.Quantity.STOCKED)
-                .withOwner("Bob"));
-        this.dataAccess.saveItem(new Item("Potatoes", Config.Category.REFRIGERATOR, Config.Quantity.STOCKED)
-                .withOwner("Bob"));
+        Config.currentDataAccess = this.dataAccess;
 
         InventoryFragment inventoryFragment = InventoryFragment.getInstance(this.dataAccess.queryForAllItems());
         getFragmentManager().beginTransaction().replace(R.id.main_panel, inventoryFragment,"inventoryFragment").commit();
+    }
+
+    public int getCurrentPosition() {
+        return this.currentPosition;
     }
 
 }

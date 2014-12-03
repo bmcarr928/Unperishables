@@ -6,6 +6,8 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,17 +19,24 @@ import android.widget.TextView;
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
 import com.bmcarr.unperishable.util.Config;
+import com.bmcarr.unperishable.util.SyncDbTask;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by jason on 12/2/2014.
  */
-public class InventoryFragment extends Fragment{
+
+public class InventoryFragment extends Fragment implements Observer {
+
+    private static final String TAG = "InventoryFragment";
     private static final String ITEMLIST = "itemList";
     private ArrayList<Item> itemList;
     private int prevGroup = -1;
+    private Thread syncThread;
 
     public static InventoryFragment getInstance(ArrayList<Item> itemList){
         InventoryFragment fragment = new InventoryFragment();
@@ -40,7 +49,15 @@ public class InventoryFragment extends Fragment{
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        SyncDbTask sdt = new SyncDbTask(((MainActivity)getActivity()).getDataAccess().getLoggedInUser(),
+                ((MainActivity)this.getActivity()).getDataAccess());
+        sdt.addObserver(this);
+        syncThread = new Thread(sdt);
+        syncThread.start();
+        Log.d(TAG, "Thread started");
+
         Bundle args = this.getArguments();
         this.itemList = (ArrayList<Item>) args.getSerializable(ITEMLIST);
 
@@ -68,15 +85,20 @@ public class InventoryFragment extends Fragment{
     }
 
     private ArrayList<Parent> createGroups(){
-
         ArrayList<Parent> toReturn = new ArrayList<Parent>();
-            for (int i = 0; i < itemList.size(); i++) {
-                toReturn.add(new Parent(itemList.get(i), new Child(itemList.get(i))));
-            }
+        for (int i = 0; i < itemList.size(); i++) {
+            toReturn.add(new Parent(itemList.get(i), new Child(itemList.get(i))));
+        }
 
-            return toReturn;
+        return toReturn;
 
     }
+    @Override
+    public void onDetach() {
+        syncThread.interrupt();
+        super.onDetach();
+    }
+
 
     private class CustomExpandableListAdapter extends BaseExpandableListAdapter {
         private ArrayList<Parent> parents;
@@ -121,6 +143,7 @@ public class InventoryFragment extends Fragment{
         public boolean hasStableIds() {
             return false;
         }
+
 
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
@@ -192,20 +215,41 @@ public class InventoryFragment extends Fragment{
                 }
             })
             .setIcon(android.R.drawable.ic_dialog_alert)
-            .show();
-
-
-
-
-            }
+            .show();   }
             });
 
             return convertView;
         }
-
         @Override
         public boolean isChildSelectable(int groupPosition, int childPosition) {
             return false;
         }
     }
+
+    @Override
+     public void update(Observable observable, Object data) {
+        Log.d(TAG, "Notified");
+        MainActivity mainActivity = (MainActivity)this.getActivity();
+        mainActivity.runOnUiThread(new viewRefresher(mainActivity));
+    }
+
+    private class viewRefresher implements Runnable {
+
+        MainActivity mainActivity;
+
+        viewRefresher(MainActivity mainActivity) {
+            this.mainActivity = mainActivity;
+        }
+
+        @Override
+        public void run() {
+            mainActivity.selectItem(mainActivity.getCurrentPosition());
+        }
+    }
+
+
+
+
+
+
 }

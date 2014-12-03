@@ -32,6 +32,9 @@ public class Item implements Serializable, Comparable{
         this.name = name;
         this.category = category;
         this.quantity = quantity;
+        this.inputDate = new Date(System.currentTimeMillis());
+        this.expirationDate = new Date(System.currentTimeMillis());
+        this.owner = Config.currentDataAccess.getLoggedInUser();
     }
 
     /**
