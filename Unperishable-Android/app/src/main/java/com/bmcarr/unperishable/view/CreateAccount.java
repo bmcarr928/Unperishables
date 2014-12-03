@@ -3,13 +3,11 @@ package com.bmcarr.unperishable.view;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
 
@@ -90,9 +88,8 @@ public class CreateAccount extends Fragment {
                     cemail.getText().clear();
                     cemail.setError("Emails don't match");
                 } else if (existingUser()) {
-                    Toast toast= Toast.makeText(getActivity(), "User already exist!", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, -50);
-                    toast.show();
+                    username.setError("User already exist!");
+                    username.requestFocus();
                 } else {
                     // TODO: add account here
                 }
@@ -171,5 +168,11 @@ public class CreateAccount extends Fragment {
         }
         return false;
     }
+//    What you want to do is make a POST_ONLY ApiRequestTask
+//    The json needs to look like this: {"name":"whatever","password":"whatever"}
+//    You can do that by building a JSON object the way I do in the AddItemTask
+//    so it's "name" and "password"
+//    Make a task just like mine, you can even copy and paste
+//    you can test with username "brett", password "asdf"
 
 }

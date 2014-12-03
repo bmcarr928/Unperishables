@@ -3,7 +3,6 @@ package com.bmcarr.unperishable.view;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,9 @@ import com.bmcarr.unperishable.R;
  *
  */
 public class LoginFragment extends Fragment {
+
+    private static final String TAG = "Login";
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -62,7 +64,7 @@ public class LoginFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         this.usernameField = (EditText) view.findViewById(R.id.txtUsername);
-        this.passwordField = (EditText) view.findViewById(R.id.txtUsername);
+        this.passwordField = (EditText) view.findViewById(R.id.txtPassword);
 
         Button loginButton = (Button) view.findViewById(R.id.login_button);
 
@@ -70,20 +72,17 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-
+                clearErrors();
                 if(!emptyFields()){
                   if (existingUser()) {
-
+                      // Not sure what to do with this
+                      ((MainActivity)LoginFragment.this.getActivity()).loginUser(LoginFragment.this.usernameField.getText().toString());
+                        // TODO: Log user in
                   } else {
-                      Toast toast= Toast.makeText(getActivity(), "User already exist!", Toast.LENGTH_SHORT);
-                      toast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, -50);
-                      toast.show();
+                      usernameField.requestFocus();
+                      usernameField.setError("User doesn't exist!");
                   }
                 }
-
-                ((MainActivity)LoginFragment.this.getActivity()).loginUser(LoginFragment.this.usernameField.getText().toString());
-
-
             }
         });
 
@@ -94,55 +93,38 @@ public class LoginFragment extends Fragment {
                 
             }
         });
-
-
         return view;
+    }
+
+    private void clearErrors() {
+        usernameField.setError(null);
+        passwordField.setError(null);
     }
 
     private boolean emptyFields() {
         /* Test if the username field is empty */
-        if(TextUtils.isEmpty(username.getText().toString())) {
-            username.setError("Please enter a username");
-            username.requestFocus();
+        if(TextUtils.isEmpty(usernameField.getText().toString())) {
+            usernameField.setError("Please enter a username");
+            usernameField.requestFocus();
             return true;
         }
         /* Test if the password field is empty */
-        if(TextUtils.isEmpty(psw.getText().toString())) {
-            psw.setError("Please enter a password");
-            psw.requestFocus();
-            return true;
-        }
-        /* Test if the password confirmation field is empty */
-        if(TextUtils.isEmpty(cpsw.getText().toString())) {
-            cpsw.setError("Please confirm password");
-            cpsw.requestFocus();
-            return true;
-        }
-        /* Test if the email field is empty */
-        if(TextUtils.isEmpty(email.getText().toString())) {
-            email.setError("Please enter an email");
-            email.requestFocus();
-            return true;
-        }
-        /* Test if the email confirmation field is empty */
-        if(TextUtils.isEmpty(cemail.getText().toString())) {
-            cemail.setError("Please confirm email");
-            cemail.requestFocus();
+        if(TextUtils.isEmpty(passwordField.getText().toString())) {
+            passwordField.setError("Please enter a password");
+            passwordField.requestFocus();
             return true;
         }
         return false;
     }
     private boolean existingUser() {
         boolean userExist = true;
-
         // TODO: Check if user exist here
 
-
+        // The if is just for testing
         if(userExist) {
-            usernameField.requestFocus();
             return true;
         }
         return false;
     }
-
 }
+
