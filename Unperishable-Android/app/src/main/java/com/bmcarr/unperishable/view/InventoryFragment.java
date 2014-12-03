@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +18,22 @@ import android.widget.TextView;
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
 import com.bmcarr.unperishable.util.Config;
+import com.bmcarr.unperishable.util.SyncDbTask;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class InventoryFragment extends Fragment {
+public class InventoryFragment extends Fragment implements Observer {
+
+    private static final String TAG = "InventoryFragment";
     private static final String ITEMLIST = "itemList";
     private ArrayList<Item> itemList;
     private int prevGroup = -1;
-    private TextView childView;
+    private Thread syncThread;
+    private Handler handler;
 
     public static InventoryFragment getInstance(ArrayList<Item>itemList) {
         InventoryFragment fragment = new InventoryFragment();
@@ -40,6 +48,13 @@ public class InventoryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        SyncDbTask sdt = new SyncDbTask(((MainActivity)getActivity()).getDataAccess().getLoggedInUser(),
+                ((MainActivity)this.getActivity()).getDataAccess());
+        sdt.addObserver(this);
+        syncThread = new Thread(sdt);
+        syncThread.start();
+        Log.d(TAG, "Thread started");
 
         Bundle args = this.getArguments();
         this.itemList = (ArrayList<Item>) args.getSerializable(ITEMLIST);
@@ -66,6 +81,12 @@ public class InventoryFragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onDetach() {
+        syncThread.interrupt();
+        super.onDetach();
     }
 
     private class ExpandableListAdapter extends BaseExpandableListAdapter {
@@ -169,67 +190,6 @@ public class InventoryFragment extends Fragment {
             return convertView;
         }
 
-//        @Override
-//        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-//
-//
-//
-//               if (convertView == null){
-//                convertView = inf.inflate(R.layout.list_item_child, parent, false);
-//
-//
-//                   Button updateButton = (Button) convertView.findViewById(R.id.update_button);
-//                   childView = (TextView) convertView.findViewById(R.id.childTextView);
-//                   Button deleteButton = (Button) convertView.findViewById(R.id.delete_button);
-//
-//
-//                   updateButton.setFocusable(false);
-//                   deleteButton.setFocusable(false);
-//
-//
-//                   childView.setText(stringParceItem(itemList.get(groupPosition)));
-//                   deleteButton.setOnClickListener(new View.OnClickListener() {
-//                       @Override
-//                       public void onClick(View v) {
-//                           new AlertDialog.Builder(getActivity())
-//                                   .setTitle("Delete")
-//                                   .setMessage("Are you sure you want to delete this entry?")
-//                                   .setPositiveButton("delete", new DialogInterface.OnClickListener() {
-//                                       public void onClick(DialogInterface dialog, int which) {
-//                                           // continue with delete
-//                                           ((MainActivity) getActivity()).getDataAccess().deleteItem(itemList.get(groupPosition));
-//                                           InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
-//                                                   InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
-//                                       }
-//                                   })
-//                                   .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-//                                       public void onClick(DialogInterface dialog, int which) {
-//                                           // do nothing
-//                                       }
-//                                   })
-//                                   .setIcon(android.R.drawable.ic_dialog_alert)
-//                                   .show();
-//
-//
-//
-//
-//                       }
-//                   });
-//
-//                   updateButton.setOnClickListener(new View.OnClickListener() {
-//                       @Override
-//                       public void onClick(View v) {
-//                           InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel, EditItem.newInstance(itemList.get(groupPosition))).commit();
-//
-//                       }
-//                   });
-//
-//            }
-//
-//
-//            return convertView;
-//        }
-
         private String stringParceItem(Item item){
             String toReturn = "";
             if(!item.getOwner().equals("")){
@@ -281,7 +241,26 @@ public class InventoryFragment extends Fragment {
         }
     }
 
+    @Override
+    public void update(Observable observable, Object data) {
+        Log.d(TAG, "Notified");
+        MainActivity mainActivity = (MainActivity)this.getActivity();
+        mainActivity.runOnUiThread(new viewRefresher(mainActivity));
+    }
 
+    private class viewRefresher implements Runnable {
+
+        MainActivity mainActivity;
+
+        viewRefresher(MainActivity mainActivity) {
+            this.mainActivity = mainActivity;
+        }
+
+        @Override
+        public void run() {
+            mainActivity.selectItem(mainActivity.getCurrentPosition());
+        }
+    }
 
 }
 

@@ -37,6 +37,8 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // TODO change this when merging with drawer stuff
+        this.currentPosition = 2;
 
         mDrawerArray = getResources().getStringArray(R.array.option_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -90,6 +92,7 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            MainActivity.this.currentPosition = position;
             selectItem(position);
         }
     }
@@ -106,6 +109,7 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
      @SuppressWarnings("ConstantConditions")
      public void selectItem(int position) {
         FragmentManager fragmentManager;
+        this.currentPosition = position;
 
         switch (position){
 
