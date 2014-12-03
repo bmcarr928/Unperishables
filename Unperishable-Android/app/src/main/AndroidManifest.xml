@@ -16,10 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".view.DrawerLayoutFragment"
-            android:label="@string/title_activity_login__fragment" >
-        </activity>
+
     </application>
     <uses-sdk android:minSdkVersion="16"
         android:targetSdkVersion="19"
