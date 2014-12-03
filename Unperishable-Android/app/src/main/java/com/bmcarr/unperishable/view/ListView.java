@@ -1,14 +1,18 @@
 package com.bmcarr.unperishable.view;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bmcarr.unperishable.R;
+import com.bmcarr.unperishable.util.SyncDbTask;
+
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,7 +22,7 @@ import com.bmcarr.unperishable.R;
  * Use the {@link ListView#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ListView extends Fragment {
+public class ListView extends Fragment implements Observer {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -65,6 +69,12 @@ public class ListView extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        SyncDbTask sdt = new SyncDbTask(((MainActivity)getActivity()).getDataAccess().getLoggedInUser(),
+                ((MainActivity)this.getActivity()).getDataAccess());
+        sdt.addObserver(this);
+        Thread thread = new Thread();
+        thread.start();
+
         return inflater.inflate(R.layout.drawer_list_item, container, false);
     }
 
@@ -90,6 +100,11 @@ public class ListView extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        ((MainActivity)this.getActivity()).selectItem(((MainActivity)this.getActivity()).getCurrentPosition());
     }
 
     /**

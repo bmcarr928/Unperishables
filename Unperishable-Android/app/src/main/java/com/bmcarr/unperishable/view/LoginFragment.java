@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
 
@@ -66,6 +65,7 @@ public class LoginFragment extends Fragment {
         this.passwordField = (EditText) view.findViewById(R.id.txtUsername);
 
         Button loginButton = (Button) view.findViewById(R.id.login_button);
+
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,9 +91,7 @@ public class LoginFragment extends Fragment {
         createAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LoginFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
-
-                        new CreateAccount()).commit();
+                
             }
         });
 

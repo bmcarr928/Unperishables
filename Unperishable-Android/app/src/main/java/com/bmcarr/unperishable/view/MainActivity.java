@@ -26,6 +26,7 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private DataAccess dataAccess;
+    private int currentPosition;
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -103,7 +104,7 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
     * */
 
      @SuppressWarnings("ConstantConditions")
-     private void selectItem(int position) {
+     public void selectItem(int position) {
         FragmentManager fragmentManager;
 
         switch (position){
@@ -206,7 +207,9 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
         * Manually generated values used for testing out display of different queries
         * Feel free to delete hard coded adds when you get add fragment working properly.
         * */
+
         this.dataAccess = new DataAccess(this.getApplicationContext(), username);
+        Config.currentDataAccess = this.dataAccess;
 
 
         this.dataAccess.saveItem(new Item("Salt", Config.Category.SPICE, Config.Quantity.OUT)
@@ -232,6 +235,10 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
 
         InventoryFragment inventoryFragment = InventoryFragment.getInstance(this.dataAccess.queryForAllItems());
         getFragmentManager().beginTransaction().replace(R.id.main_panel, inventoryFragment,"inventoryFragment").commit();
+    }
+
+    public int getCurrentPosition() {
+        return this.currentPosition;
     }
 
 }
