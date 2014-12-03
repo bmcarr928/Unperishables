@@ -161,8 +161,7 @@ public class AddItem extends Fragment {
                         // switch to inv view
                         AddItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
 
-                                InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
-                        JSONObject obj = new JSONObject();
+                        InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
                         AddItemTask addItemTask = new AddItemTask(dataAccess.getLoggedInUser(), addedItem);
                         Thread t = new Thread(addItemTask);
                         t.start();

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
 import com.bmcarr.unperishable.util.Config;
+import com.bmcarr.unperishable.util.DeleteItemTask;
 import com.bmcarr.unperishable.util.SyncDbTask;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class InventoryFragment extends Fragment implements Observer {
     private int prevGroup = -1;
     private Thread syncThread;
     private Handler handler;
+    private TextView childView;
 
     public static InventoryFragment getInstance(ArrayList<Item>itemList) {
         InventoryFragment fragment = new InventoryFragment();
@@ -165,8 +167,14 @@ public class InventoryFragment extends Fragment implements Observer {
                                 .setMessage("Are you sure you want to delete this entry?")
                                 .setPositiveButton("delete", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
+                                        MainActivity mainActivity = (MainActivity)getActivity();
+                                        DeleteItemTask deleteItemTask = new DeleteItemTask(
+                                                mainActivity.getDataAccess().getLoggedInUser(),
+                                                (Item)getGroup(groupPosition));
+                                        Thread t = new Thread(deleteItemTask);
+                                        t.start();
                                         // continue with delete
-                                        ((MainActivity) getActivity()).getDataAccess().deleteItem((Item)getGroup(groupPosition));
+                                                ((MainActivity) getActivity()).getDataAccess().deleteItem((Item)getGroup(groupPosition));
                                         InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                                                 InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
                                     }
@@ -189,6 +197,67 @@ public class InventoryFragment extends Fragment implements Observer {
 
             return convertView;
         }
+
+//        @Override
+//        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+//
+//
+//
+//               if (convertView == null){
+//                convertView = inf.inflate(R.layout.list_item_child, parent, false);
+//
+//
+//                   Button updateButton = (Button) convertView.findViewById(R.id.update_button);
+//                   childView = (TextView) convertView.findViewById(R.id.childTextView);
+//                   Button deleteButton = (Button) convertView.findViewById(R.id.delete_button);
+//
+//
+//                   updateButton.setFocusable(false);
+//                   deleteButton.setFocusable(false);
+//
+//
+//                   childView.setText(stringParceItem(itemList.get(groupPosition)));
+//                   deleteButton.setOnClickListener(new View.OnClickListener() {
+//                       @Override
+//                       public void onClick(View v) {
+//                           new AlertDialog.Builder(getActivity())
+//                                   .setTitle("Delete")
+//                                   .setMessage("Are you sure you want to delete this entry?")
+//                                   .setPositiveButton("delete", new DialogInterface.OnClickListener() {
+//                                       public void onClick(DialogInterface dialog, int which) {
+//                                           // continue with delete
+//                                           ((MainActivity) getActivity()).getDataAccess().deleteItem(itemList.get(groupPosition));
+//                                           InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+//                                                   InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+//                                       }
+//                                   })
+//                                   .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+//                                       public void onClick(DialogInterface dialog, int which) {
+//                                           // do nothing
+//                                       }
+//                                   })
+//                                   .setIcon(android.R.drawable.ic_dialog_alert)
+//                                   .show();
+//
+//
+//
+//
+//                       }
+//                   });
+//
+//                   updateButton.setOnClickListener(new View.OnClickListener() {
+//                       @Override
+//                       public void onClick(View v) {
+//                           InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel, EditItem.newInstance(itemList.get(groupPosition))).commit();
+//
+//                       }
+//                   });
+//
+//            }
+//
+//
+//            return convertView;
+//        }
 
         private String stringParceItem(Item item){
             String toReturn = "";
