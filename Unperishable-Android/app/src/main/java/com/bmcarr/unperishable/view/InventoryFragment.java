@@ -174,7 +174,7 @@ public class InventoryFragment extends Fragment implements Observer {
                                         Thread t = new Thread(deleteItemTask);
                                         t.start();
                                         // continue with delete
-                                                ((MainActivity) getActivity()).getDataAccess().deleteItem((Item)getGroup(groupPosition));
+                                        ((MainActivity) getActivity()).getDataAccess().deleteItem((Item)getGroup(groupPosition));
                                         InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                                                 InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
                                     }

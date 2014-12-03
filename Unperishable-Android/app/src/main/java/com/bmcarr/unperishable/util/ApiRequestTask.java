@@ -55,6 +55,7 @@ public class ApiRequestTask implements Runnable {
     private RequestMethod requestMethod;
     private File file;
     private boolean isFinished = false;
+    private int responseCode;
 
     private JSONArray retrievedArray = null;
     private JSONObject retrievedObject = null;
@@ -154,6 +155,11 @@ public class ApiRequestTask implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            try {
+                this.responseCode = connection.getResponseCode();
+            } catch ( IOException e ) {
+                e.printStackTrace();
+            }
             isFinished = true;
             connection.disconnect();
         }
@@ -199,6 +205,7 @@ public class ApiRequestTask implements Runnable {
             case POST_ONLY:
                 break;
         }
+        this.responseCode = connection.getResponseCode();
         if ( inputStream != null ) {
             inputStream.close();
         }
@@ -219,7 +226,7 @@ public class ApiRequestTask implements Runnable {
                 break;
             case JSON_OBJECT:
                 inputStream = connection.getInputStream();
-                this.retrievedObject = new JSONObject(getStringFromStream(inputStream).replaceAll("/n",""));
+                this.retrievedObject = new JSONObject(getStringFromStream(inputStream).replaceAll("/n", ""));
                 break;
             case JSON_READER:
                 inputStream = connection.getInputStream();
@@ -290,6 +297,10 @@ public class ApiRequestTask implements Runnable {
 
     public String getRetrievedText() {
         return plainText;
+    }
+
+    public int getResponseCode() {
+        return this.responseCode;
     }
 
 }

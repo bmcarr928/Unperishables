@@ -1,5 +1,6 @@
 package com.bmcarr.unperishable.util;
 
+import android.app.ProgressDialog;
 import android.util.Log;
 
 import com.bmcarr.unperishable.data.Item;
@@ -14,12 +15,15 @@ import java.util.Observable;
 public class CreateAccountTask extends Observable implements Runnable {
 
     private static final String TAG = "AddItemTask";
-    private String loggedInUser;
-    private Item item;
+    private String username;
+    private String password;
+    private ProgressDialog progressDialog;
+    private int responseCode;
 
-    public CreateAccountTask(String loggedInUser, Item item) {
-        this.item = item;
-        this.loggedInUser = loggedInUser;
+    public CreateAccountTask(String username, String password, ProgressDialog progressDialog) {
+        this.username = username;
+        this.password = password;
+        this.progressDialog = progressDialog;
     }
 
     @Override
@@ -27,20 +31,13 @@ public class CreateAccountTask extends Observable implements Runnable {
 
         Log.d(TAG, "SyncDbTask Running...");
         ApiRequestTask requestTask;
-        String relativeUrl = "/api/additem/";
+        String relativeUrl = "/api/adduser/";
         List<String> headers = new ArrayList<String>();
 
         JSONObject body = new JSONObject();
         try {
-            body.put("name", loggedInUser);
-            JSONObject json_item = new JSONObject();
-            json_item.put("name", item.getName());
-            json_item.put("category", item.getCategory().getId());
-            json_item.put("quantity", item.getQuantity().getId());
-            json_item.put("owner", item.getOwner());
-            json_item.put("input_date", item.getInputDate().getTime());
-            json_item.put("expiration_date", item.getExpirationDate().getTime());
-            body.put("item", json_item);
+            body.put("name", this.username);
+            body.put("password", this.password);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -54,11 +51,22 @@ public class CreateAccountTask extends Observable implements Runnable {
 
             while (!requestTask.isFinished()) {
             }
+            progressDialog.dismiss();
 
-            Log.d(TAG, "Response = " + requestTask.getRetrievedText());
+
+            this.responseCode = requestTask.getResponseCode();
+            Log.d(TAG, "Response (" + this.responseCode + ") = " + requestTask.getRetrievedText());
+            this.progressDialog.dismiss();
+
+            this.setChanged();
+            notifyObservers();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public int getResponseCode() {
+        return responseCode;
     }
 }
