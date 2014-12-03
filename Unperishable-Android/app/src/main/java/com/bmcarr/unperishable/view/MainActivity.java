@@ -5,11 +5,8 @@ import android.app.FragmentManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.bmcarr.unperishable.R;
@@ -38,51 +35,28 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // TODO change this when merging with drawer stuff
-        this.currentPosition = 2;
+        this.currentPosition = 1;
 
         mDrawerArray = getResources().getStringArray(R.array.option_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+        mDrawerList.setAdapter(new ListAdapter(this,
                 R.layout.drawer_list_item, mDrawerArray));
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 
+
         getFragmentManager().beginTransaction().add(R.id.main_panel, new LoginFragment()).commit();
+        mDrawerLayout.setDrawerLockMode(1);
+
 
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//        if (id == R.id.addItem) {
-//
-//            FragmentTransaction ft = getFragmentManager().beginTransaction();
-//
-//            ft.replace(R.id.main_panel, new AddItem()).commit();
-//
-//            return true;
-//        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void switchToInvView() {
-        // can you make this method switch the fragments however you wanted them?
-    }
 
     public DataAccess getDataAccess() {
         return dataAccess;
@@ -113,79 +87,68 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
 
         switch (position){
 
-             case 0: fragmentManager = getFragmentManager();
-                     fragmentManager.beginTransaction().replace(R.id.main_panel, new AddItem()).commit();
-                     mDrawerList.setItemChecked(position,true);
-                     mDrawerList.setSelection(position);
-                     getActionBar().setTitle(mDrawerArray[position]);
-                     mDrawerLayout.closeDrawer(mDrawerList);
-                     break;
 
-             case 1: fragmentManager = getFragmentManager();  //Grocery List
+             case 0: fragmentManager = getFragmentManager();  //Grocery List
                      fragmentManager.beginTransaction().replace(R.id.main_panel, InventoryFragment.getInstance(generateGroceryList())).commit();
-                     mDrawerList.setItemChecked(position, true);
-                     mDrawerList.setSelection(position);
-                     getActionBar().setTitle(mDrawerArray[position]);
-                     mDrawerLayout.closeDrawer(mDrawerList);
+                     drawerListSelect(position);
                       break;
-             case 2: fragmentManager = getFragmentManager();  //All Items
+             case 1: fragmentManager = getFragmentManager();  //All Items
                      ArrayList<Item> itemList = this.dataAccess.queryForAllItems();
                      Collections.sort(itemList);
                      fragmentManager.beginTransaction().replace(R.id.main_panel, InventoryFragment.getInstance(itemList)).commit();
-                     mDrawerList.setItemChecked(position, true);
-                     mDrawerList.setSelection(position);
-                     getActionBar().setTitle(mDrawerArray[position]);
-                     mDrawerLayout.closeDrawer(mDrawerList);
+                     drawerListSelect(position);
                      break;
-             case 3: fragmentManager = getFragmentManager();  //Refrigerator
+             case 2: fragmentManager = getFragmentManager();  //Refrigerator
                      fragmentManager.beginTransaction().replace(R.id.main_panel,
                              InventoryFragment.getInstance(this.dataAccess.queryForItemsOfCategory(Config.Category.REFRIGERATOR))).commit();
-                     mDrawerList.setItemChecked(position, true);
-                     mDrawerList.setSelection(position);
-                     getActionBar().setTitle(mDrawerArray[position]);
-                     mDrawerLayout.closeDrawer(mDrawerList);
+                     drawerListSelect(position);
                      break;
-             case 4: fragmentManager = getFragmentManager();  //Pantry
+             case 3: fragmentManager = getFragmentManager();  //Pantry
                      fragmentManager.beginTransaction().replace(R.id.main_panel,
                              InventoryFragment.getInstance(this.dataAccess.queryForItemsOfCategory(Config.Category.PANTRY))).commit();
-                     mDrawerList.setItemChecked(position, true);
-                     mDrawerList.setSelection(position);
-                     getActionBar().setTitle(mDrawerArray[position]);
-                     mDrawerLayout.closeDrawer(mDrawerList);
+                     drawerListSelect(position);
                      break;
-             case 5: fragmentManager = getFragmentManager();  //Spices
+             case 4: fragmentManager = getFragmentManager();  //Spices
                      fragmentManager.beginTransaction().replace(R.id.main_panel,
                              InventoryFragment.getInstance(this.dataAccess.queryForItemsOfCategory(Config.Category.SPICE))).commit();
-                     mDrawerList.setItemChecked(position, true);
-                     mDrawerList.setSelection(position);
-                     getActionBar().setTitle(mDrawerArray[position]);
-                     mDrawerLayout.closeDrawer(mDrawerList);
+                     drawerListSelect(position);
                      break;
-             case 6: fragmentManager = getFragmentManager();  //Out
+             case 5: fragmentManager = getFragmentManager();  //Out
                      fragmentManager.beginTransaction().replace(R.id.main_panel,
                              InventoryFragment.getInstance(this.dataAccess.queryForItemsOfQuantity(Config.Quantity.OUT))).commit();
-                     mDrawerList.setItemChecked(position, true);
-                     mDrawerList.setSelection(position);
-                     getActionBar().setTitle(mDrawerArray[position]);
-                     mDrawerLayout.closeDrawer(mDrawerList);
+                     drawerListSelect(position);
                      break;
-             case 7: fragmentManager = getFragmentManager();  //Low
+             case 6: fragmentManager = getFragmentManager();  //Low
                      fragmentManager.beginTransaction().replace(R.id.main_panel,
                              InventoryFragment.getInstance(this.dataAccess.queryForItemsOfQuantity(Config.Quantity.LOW))).commit();
-                     mDrawerList.setItemChecked(position, true);
-                     mDrawerList.setSelection(position);
-                     getActionBar().setTitle(mDrawerArray[position]);
-                     mDrawerLayout.closeDrawer(mDrawerList);
+                     drawerListSelect(position);
                      break;
-             case 8: fragmentManager = getFragmentManager();  //Stocked
+             case 7: fragmentManager = getFragmentManager();  //Stocked
                      fragmentManager.beginTransaction().replace(R.id.main_panel,
                              InventoryFragment.getInstance(this.dataAccess.queryForItemsOfQuantity(Config.Quantity.STOCKED))).commit();
-                     mDrawerList.setItemChecked(position, true);
-                     mDrawerList.setSelection(position);
-                     getActionBar().setTitle(mDrawerArray[position]);
-                     mDrawerLayout.closeDrawer(mDrawerList);
+                     drawerListSelect(position);
                      break;
+            case 9: this.currentPosition = 1; // Need to set this for the future
+                    fragmentManager = getFragmentManager();
+                    fragmentManager.beginTransaction().replace(R.id.main_panel, new AddItem()).commit();
+                    drawerListSelect(position);
+                    break;
+            case 10: fragmentManager = getFragmentManager();
+                     fragmentManager.beginTransaction().replace(R.id.main_panel, new LoginFragment()).commit();
+                     getActionBar().setTitle(R.string.app_name);
+                     mDrawerLayout.setDrawerLockMode(1);
         }
+    }
+    /*
+    * drawerListSelect method is the action method for when an item is selected in the drawer. This method takes one argument
+    * the position where the item was selected and performs the action of setting the item as selected, resetting the title and
+    * closing the drawer. This is private method called by selectItem.
+    * */
+    private void drawerListSelect(int position) {
+        mDrawerList.setItemChecked(position,true);
+        mDrawerList.setSelection(position);
+        getActionBar().setTitle(mDrawerArray[position]);
+        mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     /*
@@ -213,6 +176,8 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
 
         InventoryFragment inventoryFragment = InventoryFragment.getInstance(this.dataAccess.queryForAllItems());
         getFragmentManager().beginTransaction().replace(R.id.main_panel, inventoryFragment,"inventoryFragment").commit();
+        getActionBar().setTitle(R.string.all_items);
+        mDrawerLayout.setDrawerLockMode(0);
     }
 
     public int getCurrentPosition() {

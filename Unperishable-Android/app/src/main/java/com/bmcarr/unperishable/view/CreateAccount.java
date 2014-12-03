@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.util.CreateAccountTask;
-import com.bmcarr.unperishable.util.Utilities;
 
 import java.util.Observable;
 import java.util.Observer;
