@@ -1,8 +1,10 @@
 package com.bmcarr.unperishable.view;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
+import com.bmcarr.unperishable.util.CreateAccountTask;
+import com.bmcarr.unperishable.util.Utilities;
+
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,9 +27,10 @@ import com.bmcarr.unperishable.R;
  * create an instance of this fragment.
  *
  */
-public class CreateAccount extends Fragment {
+public class CreateAccount extends Fragment implements Observer {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String TAG = "CreateAccount";
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -70,9 +78,7 @@ public class CreateAccount extends Fragment {
         this.email = (EditText) view.findViewById(R.id.createAcct_email);
         this.cemail = (EditText) view.findViewById(R.id.createAcct_email_confirm);
 
-
         Button createUser = (Button) view.findViewById(R.id.createAcct_createButton);
-
         createUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,12 +95,15 @@ public class CreateAccount extends Fragment {
                 }else if (!fieldsMatch(cemail, email)) {
                     cemail.getText().clear();
                     cemail.setError("Emails don't match");
-                } else if (existingUser()) {
-                    Toast toast= Toast.makeText(getActivity(), "User already exist!", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL, 0, -50);
-                    toast.show();
                 } else {
-                    // TODO: add account here
+                    ProgressDialog progressDialog = ProgressDialog.show(CreateAccount.this.getActivity(),
+                            "Creating Account", "Please wait...");
+                    progressDialog.setCancelable(true);
+                    CreateAccountTask createAccountTask = new CreateAccountTask(
+                            username.getText().toString(), psw.getText().toString(), progressDialog);
+                    createAccountTask.addObserver(CreateAccount.this);
+                    Thread t = new Thread(createAccountTask);
+                    t.start();
                 }
             }
         });
@@ -170,6 +179,45 @@ public class CreateAccount extends Fragment {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        MainActivity mainActivity = (MainActivity)this.getActivity();
+        final CreateAccountTask createAccountTask = (CreateAccountTask)observable;
+        if ( createAccountTask.getResponseCode() == 403 ) {
+            Log.d(TAG, "403 response code");
+            mainActivity.runOnUiThread(new ToastMaker("Error, username already exists"));
+        } else if ( createAccountTask.getResponseCode() != 200 ) {
+            mainActivity.runOnUiThread(new ToastMaker("Error communicating with the server"));
+        } else {
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((MainActivity)CreateAccount.this.getActivity()).loginUser(createAccountTask.getUsername());
+                }
+            });
+        }
+    }
+
+    private class ToastMaker implements Runnable {
+
+        String message;
+
+        ToastMaker(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public void run() {
+            MainActivity mainActivity = (MainActivity)CreateAccount.this.getActivity();
+            mainActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(CreateAccount.this.getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
 }

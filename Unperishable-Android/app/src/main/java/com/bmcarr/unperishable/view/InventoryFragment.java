@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +18,23 @@ import android.widget.TextView;
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
 import com.bmcarr.unperishable.util.Config;
+import com.bmcarr.unperishable.util.DeleteItemTask;
+import com.bmcarr.unperishable.util.SyncDbTask;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
-public class InventoryFragment extends Fragment {
+public class InventoryFragment extends Fragment implements Observer {
+
+    private static final String TAG = "InventoryFragment";
     private static final String ITEMLIST = "itemList";
     private ArrayList<Item> itemList;
     private int prevGroup = -1;
+    private Thread syncThread;
+    private Handler handler;
     private TextView childView;
 
     public static InventoryFragment getInstance(ArrayList<Item>itemList) {
@@ -40,6 +50,13 @@ public class InventoryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        SyncDbTask sdt = new SyncDbTask(((MainActivity)getActivity()).getDataAccess().getLoggedInUser(),
+                ((MainActivity)this.getActivity()).getDataAccess());
+        sdt.addObserver(this);
+        syncThread = new Thread(sdt);
+        syncThread.start();
+        Log.d(TAG, "Thread started");
 
         Bundle args = this.getArguments();
         this.itemList = (ArrayList<Item>) args.getSerializable(ITEMLIST);
@@ -66,6 +83,12 @@ public class InventoryFragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onDetach() {
+        syncThread.interrupt();
+        super.onDetach();
     }
 
     private class ExpandableListAdapter extends BaseExpandableListAdapter {
@@ -144,6 +167,12 @@ public class InventoryFragment extends Fragment {
                                 .setMessage("Are you sure you want to delete this entry?")
                                 .setPositiveButton("delete", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
+                                        MainActivity mainActivity = (MainActivity)getActivity();
+                                        DeleteItemTask deleteItemTask = new DeleteItemTask(
+                                                mainActivity.getDataAccess().getLoggedInUser(),
+                                                (Item)getGroup(groupPosition));
+                                        Thread t = new Thread(deleteItemTask);
+                                        t.start();
                                         // continue with delete
                                         ((MainActivity) getActivity()).getDataAccess().deleteItem((Item)getGroup(groupPosition));
                                         InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
@@ -281,7 +310,26 @@ public class InventoryFragment extends Fragment {
         }
     }
 
+    @Override
+    public void update(Observable observable, Object data) {
+        Log.d(TAG, "Notified");
+        MainActivity mainActivity = (MainActivity)this.getActivity();
+        mainActivity.runOnUiThread(new viewRefresher(mainActivity));
+    }
 
+    private class viewRefresher implements Runnable {
+
+        MainActivity mainActivity;
+
+        viewRefresher(MainActivity mainActivity) {
+            this.mainActivity = mainActivity;
+        }
+
+        @Override
+        public void run() {
+            mainActivity.selectItem(mainActivity.getCurrentPosition());
+        }
+    }
 
 }
 
