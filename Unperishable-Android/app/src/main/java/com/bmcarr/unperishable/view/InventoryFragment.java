@@ -1,5 +1,6 @@
 package com.bmcarr.unperishable.view;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -18,14 +19,16 @@ import android.widget.TextView;
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
 import com.bmcarr.unperishable.util.Config;
-import com.bmcarr.unperishable.util.DeleteItemTask;
 import com.bmcarr.unperishable.util.SyncDbTask;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+
+/**
+ * Created by jason on 12/2/2014.
+ */
 
 public class InventoryFragment extends Fragment implements Observer {
 
@@ -34,19 +37,16 @@ public class InventoryFragment extends Fragment implements Observer {
     private ArrayList<Item> itemList;
     private int prevGroup = -1;
     private Thread syncThread;
-    private Handler handler;
-    private TextView childView;
 
-    public static InventoryFragment getInstance(ArrayList<Item>itemList) {
+    public static InventoryFragment getInstance(ArrayList<Item> itemList){
         InventoryFragment fragment = new InventoryFragment();
         Bundle args = new Bundle();
-        // added sort
+
         Collections.sort(itemList);
         args.putSerializable(ITEMLIST, itemList);
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,48 +62,55 @@ public class InventoryFragment extends Fragment implements Observer {
         this.itemList = (ArrayList<Item>) args.getSerializable(ITEMLIST);
 
         View view = inflater.inflate(R.layout.fragment_inventory, container, false);
-        final ExpandableListView theListView = (ExpandableListView) view.findViewById(R.id.inventory_list);
-        List<Item> items = this.itemList;
-        theListView.setAdapter(new ExpandableListAdapter());
 
-        theListView.setGroupIndicator(null);
+        final ExpandableListView listView = (ExpandableListView) view.findViewById(R.id.inventory_list);
+        // create groups
 
+        listView.setAdapter(new CustomExpandableListAdapter(getActivity(),createGroups()));
+        listView.setGroupIndicator(null);
 
-        theListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+        listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
                 if(prevGroup!= -1){
-                    theListView.collapseGroup(prevGroup);
+                    listView.collapseGroup(prevGroup);
                 }
                 prevGroup=groupPosition;
             }
         });
 
 
-
         return view;
     }
 
+    private ArrayList<Parent> createGroups(){
+        ArrayList<Parent> toReturn = new ArrayList<Parent>();
+        for (int i = 0; i < itemList.size(); i++) {
+            toReturn.add(new Parent(itemList.get(i), new Child(itemList.get(i))));
+        }
+
+        return toReturn;
+
+    }
     @Override
     public void onDetach() {
         syncThread.interrupt();
         super.onDetach();
     }
 
-    private class ExpandableListAdapter extends BaseExpandableListAdapter {
-        public void testFix(){
 
-        }
+    private class CustomExpandableListAdapter extends BaseExpandableListAdapter {
+        private ArrayList<Parent> parents;
+        private Activity activity;
 
-        private final LayoutInflater inf;
-
-        public ExpandableListAdapter() {
-            inf = LayoutInflater.from(getActivity());
+        public CustomExpandableListAdapter(Activity activity, ArrayList<Parent> parents){
+            this.parents = parents;
+            this.activity = activity;
         }
 
         @Override
         public int getGroupCount() {
-            return itemList.size();
+            return parents.size();
         }
 
         @Override
@@ -113,12 +120,12 @@ public class InventoryFragment extends Fragment implements Observer {
 
         @Override
         public Object getGroup(int groupPosition) {
-            return itemList.get(groupPosition);
+            return parents.get(groupPosition);
         }
 
         @Override
         public Object getChild(int groupPosition, int childPosition) {
-            return "child";
+            return parents.get(groupPosition).getChild();
         }
 
         @Override
@@ -128,189 +135,98 @@ public class InventoryFragment extends Fragment implements Observer {
 
         @Override
         public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
+            return 0;
         }
 
         @Override
         public boolean hasStableIds() {
-            return true;
-        }
-        @Override
-        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-
-            ViewHolder holder;
-            if (convertView == null) {
-                convertView = inf.inflate(R.layout.list_item_child, parent, false);
-                Button updateButton = (Button) convertView.findViewById(R.id.update_button);
-//                TextView  childView = (TextView) convertView.findViewById(R.id.childTextView);
-//                childView.setText(stringParceItem(itemList.get(groupPosition)));
-                updateButton.setFocusable(false);
-
-                updateButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel, EditItem.newInstance((Item) getGroup(groupPosition))).commit();
-
-                    }
-                });
-
-                Button deleteButton = (Button) convertView.findViewById(R.id.delete_button);
-
-                deleteButton.setFocusable(false);
-
-                deleteButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle("Delete")
-                                .setMessage("Are you sure you want to delete this entry?")
-                                .setPositiveButton("delete", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        MainActivity mainActivity = (MainActivity)getActivity();
-                                        DeleteItemTask deleteItemTask = new DeleteItemTask(
-                                                mainActivity.getDataAccess().getLoggedInUser(),
-                                                (Item)getGroup(groupPosition));
-                                        Thread t = new Thread(deleteItemTask);
-                                        t.start();
-                                        // continue with delete
-                                        ((MainActivity) getActivity()).getDataAccess().deleteItem((Item)getGroup(groupPosition));
-                                        InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
-                                                InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
-                                    }
-                                })
-                                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // do nothing
-                                    }
-                                })
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
-
-
-
-
-                    }
-                });
-
-            }
-
-            return convertView;
+            return false;
         }
 
-//        @Override
-//        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-//
-//
-//
-//               if (convertView == null){
-//                convertView = inf.inflate(R.layout.list_item_child, parent, false);
-//
-//
-//                   Button updateButton = (Button) convertView.findViewById(R.id.update_button);
-//                   childView = (TextView) convertView.findViewById(R.id.childTextView);
-//                   Button deleteButton = (Button) convertView.findViewById(R.id.delete_button);
-//
-//
-//                   updateButton.setFocusable(false);
-//                   deleteButton.setFocusable(false);
-//
-//
-//                   childView.setText(stringParceItem(itemList.get(groupPosition)));
-//                   deleteButton.setOnClickListener(new View.OnClickListener() {
-//                       @Override
-//                       public void onClick(View v) {
-//                           new AlertDialog.Builder(getActivity())
-//                                   .setTitle("Delete")
-//                                   .setMessage("Are you sure you want to delete this entry?")
-//                                   .setPositiveButton("delete", new DialogInterface.OnClickListener() {
-//                                       public void onClick(DialogInterface dialog, int which) {
-//                                           // continue with delete
-//                                           ((MainActivity) getActivity()).getDataAccess().deleteItem(itemList.get(groupPosition));
-//                                           InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
-//                                                   InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
-//                                       }
-//                                   })
-//                                   .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-//                                       public void onClick(DialogInterface dialog, int which) {
-//                                           // do nothing
-//                                       }
-//                                   })
-//                                   .setIcon(android.R.drawable.ic_dialog_alert)
-//                                   .show();
-//
-//
-//
-//
-//                       }
-//                   });
-//
-//                   updateButton.setOnClickListener(new View.OnClickListener() {
-//                       @Override
-//                       public void onClick(View v) {
-//                           InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel, EditItem.newInstance(itemList.get(groupPosition))).commit();
-//
-//                       }
-//                   });
-//
-//            }
-//
-//
-//            return convertView;
-//        }
-
-        private String stringParceItem(Item item){
-            String toReturn = "";
-            if(!item.getOwner().equals("")){
-                toReturn = "Owner: " + item.getOwner();
-            }
-            toReturn = toReturn + "\nCategory " + item.getCategory().toString() + "\nInput Date: " + item.getInputDate().toString();
-            if(item.getExpirationDate() != null){
-                toReturn = toReturn + "Expiration Date " + item.getExpirationDate().toString();
-            }
-            return toReturn;
-        }
 
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-            ViewHolder holder;
+
 
             if (convertView == null) {
-                convertView = inf.inflate(R.layout.list_item_parent, parent, false);
+                LayoutInflater inflater = LayoutInflater.from(activity);
+                convertView = inflater.inflate(R.layout.list_item_parent, parent, false);
                 Drawable d;
                 if(itemList.get(groupPosition).getQuantity() == Config.Quantity.LOW){
                     d = getResources().getDrawable(R.drawable.yellow_horizontal_gradient);
                 }else if (itemList.get(groupPosition).getQuantity() == Config.Quantity.OUT){
                     d = getResources().getDrawable(R.drawable.red_horizontal_gradient);
                 } else {
-                     d = getResources().getDrawable(R.drawable.green_horizontal_gradient);
+                    d = getResources().getDrawable(R.drawable.green_horizontal_gradient);
                 }
                 convertView.setBackground(d);
-                holder = new ViewHolder();
-                holder.text = (TextView) convertView.findViewById(R.id.item_name);
-                convertView.setTag(holder);
+                TextView textView = (TextView) convertView.findViewById(R.id.item_name);
+                textView.setText(parents.get(groupPosition).getName());
 
 
-            } else {
-                holder = (ViewHolder) convertView.getTag();
             }
-
-            holder.text.setText(getGroup(groupPosition).toString());
-
             return convertView;
         }
 
         @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
-        }
+        public View getChildView(final int groupPosition, int childPosition, boolean isLastChild, View convertView, final ViewGroup parent) {
+            if (convertView == null){
+                LayoutInflater inflater = LayoutInflater.from(activity);
+                convertView = inflater.inflate(R.layout.list_item_child, parent, false);
 
-        private class ViewHolder {
-            TextView text;
+            }
+                TextView childView = (TextView) convertView.findViewById(R.id.childTextView);
+
+                childView.setText(parents.get(groupPosition).getChild().getInfo());
+
+            Button updateButton = (Button) convertView.findViewById(R.id.update_button);
+            updateButton.setFocusable(false);
+
+        updateButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+            InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel, EditItem.newInstance(parents.get(groupPosition).getItem())).commit();
+
+            }
+            });
+
+            Button deleteButton = (Button) convertView.findViewById(R.id.delete_button);
+
+            deleteButton.setFocusable(false);
+
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+            new AlertDialog.Builder(getActivity())
+            .setTitle("Delete")
+            .setMessage("Are you sure you want to delete this entry?")
+            .setPositiveButton("delete", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // continue with delete
+                    ((MainActivity) getActivity()).getDataAccess().deleteItem(parents.get(groupPosition).getItem());
+                    InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+                            InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+                }
+            })
+            .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // do nothing
+                }
+            })
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show();   }
+            });
+
+            return convertView;
+        }
+        @Override
+        public boolean isChildSelectable(int groupPosition, int childPosition) {
+            return false;
         }
     }
 
     @Override
-    public void update(Observable observable, Object data) {
+     public void update(Observable observable, Object data) {
         Log.d(TAG, "Notified");
         MainActivity mainActivity = (MainActivity)this.getActivity();
         mainActivity.runOnUiThread(new viewRefresher(mainActivity));
@@ -330,6 +246,9 @@ public class InventoryFragment extends Fragment implements Observer {
         }
     }
 
+
+
+
+
+
 }
-
-

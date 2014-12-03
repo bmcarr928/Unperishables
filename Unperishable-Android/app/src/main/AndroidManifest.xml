@@ -18,6 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
     <uses-sdk android:minSdkVersion="16"
         android:targetSdkVersion="19"
