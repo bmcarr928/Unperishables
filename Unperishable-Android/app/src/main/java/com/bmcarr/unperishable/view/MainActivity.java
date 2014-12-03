@@ -35,7 +35,7 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // TODO change this when merging with drawer stuff
-        this.currentPosition = 2;
+        this.currentPosition = 1;
 
         mDrawerArray = getResources().getStringArray(R.array.option_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -128,7 +128,8 @@ public class MainActivity extends Activity implements AddItem.OnFragmentInteract
                              InventoryFragment.getInstance(this.dataAccess.queryForItemsOfQuantity(Config.Quantity.STOCKED))).commit();
                      drawerListSelect(position);
                      break;
-            case 9: fragmentManager = getFragmentManager();
+            case 9: this.currentPosition = 1; // Need to set this for the future
+                    fragmentManager = getFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.main_panel, new AddItem()).commit();
                     drawerListSelect(position);
                     break;
