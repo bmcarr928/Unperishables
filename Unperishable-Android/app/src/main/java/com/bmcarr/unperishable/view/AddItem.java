@@ -1,6 +1,7 @@
 package com.bmcarr.unperishable.view;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bmcarr.unperishable.R;
@@ -28,6 +30,7 @@ import org.json.JSONObject;
 import java.net.MalformedURLException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -50,8 +53,10 @@ public class AddItem extends Fragment {
     private EditText ownerEditText;
     private Spinner categorySpinner;
     private Spinner quantitySpinner;
-    private DatePicker inputDatePicker;
-    private DatePicker expirationDatePicker;
+    private int inputYear, inputMonth, inputDay;
+    private int expYear =0, expMonth=0, expDay =0;
+    private TextView inputDate;
+    private TextView expirationDate;
 
 
 
@@ -92,10 +97,21 @@ public class AddItem extends Fragment {
         quantitySpinner = (Spinner) view.findViewById(R.id.quantity_spinner);
         //set up Spinners to have the right options
         setupSpinner(view,categorySpinner, R.array.categories_array);
-        setupSpinner(view, quantitySpinner,R.array.quantities_array);
-        // get DatePickers
-        inputDatePicker = (DatePicker) view.findViewById(R.id.input_date);
-        expirationDatePicker = (DatePicker) view.findViewById(R.id.expiration_date);
+        setupSpinner(view,quantitySpinner, R.array.quantities_array);
+         Calendar cal = Calendar.getInstance();
+        // get date texts
+        inputDate = (TextView) view.findViewById(R.id.addItem_input_date);
+        inputYear = cal.get(Calendar.YEAR);
+        inputMonth = cal.get(Calendar.MONTH);
+        inputDay = cal.get(Calendar.DAY_OF_MONTH);
+        inputDate.setText((inputMonth + 1) + "-" + inputDay + "-" + inputYear);
+
+        expirationDate = (TextView) view.findViewById(R.id.addItem_exp_date);
+
+        expYear = cal.get(Calendar.YEAR);
+        expMonth = cal.get(Calendar.MONTH);
+        expDay = cal.get(Calendar.DAY_OF_MONTH);
+        expirationDate.setText((expMonth + 1) + "-" + expDay + "-" + expYear);
 
 
 
@@ -110,13 +126,13 @@ public class AddItem extends Fragment {
                 int categoryPosition = categorySpinner.getSelectedItemPosition();
                 int quantityPosition = quantitySpinner.getSelectedItemPosition();
 
-                // must do this, going from java.util.Data to java.sql.Data types
-                GregorianCalendar inputCalendar = new GregorianCalendar(inputDatePicker.getYear(),
-                        inputDatePicker.getMonth(), inputDatePicker.getDayOfMonth());
+                // must do this, going from java.sql.Data to java.util.Data types
+                GregorianCalendar inputCalendar = new GregorianCalendar(inputYear,
+                        inputMonth, inputDay);
                 Date inputDate = new Date(inputCalendar.getTimeInMillis());
 
-                GregorianCalendar expirationCalendar = new GregorianCalendar(expirationDatePicker.getYear(),
-                        expirationDatePicker.getMonth(), expirationDatePicker.getDayOfMonth());
+                GregorianCalendar expirationCalendar = new GregorianCalendar(expYear,
+                        expMonth, expDay);
                 Date expirationDate = new Date(expirationCalendar.getTimeInMillis());
 
 
@@ -143,6 +159,7 @@ public class AddItem extends Fragment {
                         dataAccess.saveItem(addedItem);
                         // switch to inv view
                         AddItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+
                                 InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
                         JSONObject obj = new JSONObject();
                         try {
@@ -194,6 +211,61 @@ public class AddItem extends Fragment {
             public void onClick(View v) {
                 AddItem.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                         InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+            }
+        });
+
+        // button for changing input date
+        Button currentDateButton = (Button) view.findViewById(R.id.addCurrent_date_button);
+
+        currentDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                // Launch Date Picker Dialog
+                DatePickerDialog dpd = new DatePickerDialog(getActivity(),
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // Display Selected date in textbox
+                                inputDate.setText((monthOfYear + 1) + "-"+ dayOfMonth + "-" + year);
+                                inputYear = year;
+                                inputMonth = monthOfYear + 1;
+                                inputDay = dayOfMonth;
+
+                            }
+                        }, inputYear, inputMonth, inputDay);
+                dpd.show();
+
+            }
+        });
+
+        // button for backing out of this fragment
+        Button expDateButton = (Button) view.findViewById(R.id.addExp_date_button);
+
+        expDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                // Launch Date Picker Dialog
+                DatePickerDialog dpd = new DatePickerDialog(getActivity(),
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                // Display Selected date in textbox
+                                expirationDate.setText((monthOfYear + 1) + "-"+ dayOfMonth + "-" + year);
+                                expYear = year;
+                                expMonth = monthOfYear + 1;
+                                expDay = dayOfMonth;
+                            }
+                        }, expYear, expMonth, expDay);
+                dpd.show();
+
             }
         });
 

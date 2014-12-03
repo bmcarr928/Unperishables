@@ -77,12 +77,14 @@ public class LoginFragment extends Fragment {
             }
         });
 
-        Button createAccountButton = (Button) view.findViewById(R.id.login_button);
+        Button createAccountButton = (Button) view.findViewById(R.id.create_account_button);
 
         createAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+                LoginFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+
+                        new CreateAccount()).commit();
             }
         });
 

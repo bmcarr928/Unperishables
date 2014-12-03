@@ -12,7 +12,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center_horizontal|center_vertical"
-        android:background="@android:color/holo_blue_dark"
         tools:context="com.bmcarr.unperishable.view.EditItem"
         >
 
@@ -23,6 +22,11 @@
             android:ems="10"
             android:hint="@string/enter_name"
             />
+        <EditText
+            android:id="@+id/editItem_owner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_owner_name"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,12 +54,33 @@
             android:text="@string/enter_input_date"
             android:textSize="20sp"/>
 
-        <DatePicker
-            android:id="@+id/editItem_input_date"
+
+        <!--<DatePicker-->
+            <!--android:id="@+id/editItem_input_date"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:calendarViewShown="false"-->
+            <!--/>-->
+
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:calendarViewShown="false"
-            />
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editItem_input_date" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/current_date_button"
+                android:text="Change Date"
+                android:textSize="10sp"
+                android:singleLine="true" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/editItem_expiration_date_picker"
@@ -64,18 +89,26 @@
             android:text="@string/enter_expiration_date"
             android:textSize="20sp"/>
 
-        <DatePicker
-            android:id="@+id/editItem_expiration_date"
+
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:calendarViewShown="false"/>
+            android:layout_gravity="center_horizontal">
 
-        <EditText
-            android:id="@+id/editItem_owner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:hint="@string/enter_owner_name"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/EditItem_expiration_date" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/experation_date_button"
+                android:text="Change Date"
+                android:textSize="10sp" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

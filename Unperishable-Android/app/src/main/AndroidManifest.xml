@@ -7,7 +7,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/screen_title"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name="com.bmcarr.unperishable.view.MainActivity"
             android:label="@string/app_name" >
@@ -22,5 +22,8 @@
             android:label="@string/title_activity_login__fragment" >
         </activity>
     </application>
+    <uses-sdk android:minSdkVersion="16"
+        android:targetSdkVersion="19"
+        android:maxSdkVersion="19"/>
 
 </manifest>

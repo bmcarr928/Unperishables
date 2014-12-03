@@ -3,6 +3,7 @@ package com.bmcarr.unperishable.view;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.bmcarr.unperishable.R;
 import com.bmcarr.unperishable.data.Item;
+import com.bmcarr.unperishable.util.Config;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +25,7 @@ public class InventoryFragment extends Fragment {
     private static final String ITEMLIST = "itemList";
     private ArrayList<Item> itemList;
     private int prevGroup = -1;
+    private TextView childView;
 
     public static InventoryFragment getInstance(ArrayList<Item>itemList) {
         InventoryFragment fragment = new InventoryFragment();
@@ -34,6 +37,7 @@ public class InventoryFragment extends Fragment {
         return fragment;
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -41,11 +45,10 @@ public class InventoryFragment extends Fragment {
         this.itemList = (ArrayList<Item>) args.getSerializable(ITEMLIST);
 
         View view = inflater.inflate(R.layout.fragment_inventory, container, false);
-
         final ExpandableListView theListView = (ExpandableListView) view.findViewById(R.id.inventory_list);
         List<Item> items = this.itemList;
+        theListView.setAdapter(new ExpandableListAdapter());
 
-        theListView.setAdapter(new ExpandableListAdapter(items));
         theListView.setGroupIndicator(null);
 
 
@@ -56,6 +59,7 @@ public class InventoryFragment extends Fragment {
                     theListView.collapseGroup(prevGroup);
                 }
                 prevGroup=groupPosition;
+
             }
         });
 
@@ -65,18 +69,19 @@ public class InventoryFragment extends Fragment {
     }
 
     private class ExpandableListAdapter extends BaseExpandableListAdapter {
+        public void testFix(){
+
+        }
 
         private final LayoutInflater inf;
-        private List<Item> items;
 
-        public ExpandableListAdapter(List<Item> items) {
-            this.items = items;
+        public ExpandableListAdapter() {
             inf = LayoutInflater.from(getActivity());
         }
 
         @Override
         public int getGroupCount() {
-            return items.size();
+            return itemList.size();
         }
 
         @Override
@@ -86,7 +91,7 @@ public class InventoryFragment extends Fragment {
 
         @Override
         public Object getGroup(int groupPosition) {
-            return items.get(groupPosition);
+            return itemList.get(groupPosition);
         }
 
         @Override
@@ -108,7 +113,6 @@ public class InventoryFragment extends Fragment {
         public boolean hasStableIds() {
             return true;
         }
-
         @Override
         public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
@@ -116,13 +120,14 @@ public class InventoryFragment extends Fragment {
             if (convertView == null) {
                 convertView = inf.inflate(R.layout.list_item_child, parent, false);
                 Button updateButton = (Button) convertView.findViewById(R.id.update_button);
-
+//                TextView  childView = (TextView) convertView.findViewById(R.id.childTextView);
+//                childView.setText(stringParceItem(itemList.get(groupPosition)));
                 updateButton.setFocusable(false);
 
                 updateButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel, EditItem.newInstance(items.get(groupPosition))).commit();
+                        InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel, EditItem.newInstance((Item) getGroup(groupPosition))).commit();
 
                     }
                 });
@@ -140,7 +145,7 @@ public class InventoryFragment extends Fragment {
                                 .setPositiveButton("delete", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         // continue with delete
-                                      ((MainActivity) getActivity()).getDataAccess().deleteItem(items.get(groupPosition));
+                                        ((MainActivity) getActivity()).getDataAccess().deleteItem((Item)getGroup(groupPosition));
                                         InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
                                                 InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
                                     }
@@ -164,16 +169,99 @@ public class InventoryFragment extends Fragment {
             return convertView;
         }
 
+//        @Override
+//        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+//
+//
+//
+//               if (convertView == null){
+//                convertView = inf.inflate(R.layout.list_item_child, parent, false);
+//
+//
+//                   Button updateButton = (Button) convertView.findViewById(R.id.update_button);
+//                   childView = (TextView) convertView.findViewById(R.id.childTextView);
+//                   Button deleteButton = (Button) convertView.findViewById(R.id.delete_button);
+//
+//
+//                   updateButton.setFocusable(false);
+//                   deleteButton.setFocusable(false);
+//
+//
+//                   childView.setText(stringParceItem(itemList.get(groupPosition)));
+//                   deleteButton.setOnClickListener(new View.OnClickListener() {
+//                       @Override
+//                       public void onClick(View v) {
+//                           new AlertDialog.Builder(getActivity())
+//                                   .setTitle("Delete")
+//                                   .setMessage("Are you sure you want to delete this entry?")
+//                                   .setPositiveButton("delete", new DialogInterface.OnClickListener() {
+//                                       public void onClick(DialogInterface dialog, int which) {
+//                                           // continue with delete
+//                                           ((MainActivity) getActivity()).getDataAccess().deleteItem(itemList.get(groupPosition));
+//                                           InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel,
+//                                                   InventoryFragment.getInstance(((MainActivity) getActivity()).getDataAccess().queryForAllItems())).commit();
+//                                       }
+//                                   })
+//                                   .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+//                                       public void onClick(DialogInterface dialog, int which) {
+//                                           // do nothing
+//                                       }
+//                                   })
+//                                   .setIcon(android.R.drawable.ic_dialog_alert)
+//                                   .show();
+//
+//
+//
+//
+//                       }
+//                   });
+//
+//                   updateButton.setOnClickListener(new View.OnClickListener() {
+//                       @Override
+//                       public void onClick(View v) {
+//                           InventoryFragment.this.getFragmentManager().beginTransaction().replace(R.id.main_panel, EditItem.newInstance(itemList.get(groupPosition))).commit();
+//
+//                       }
+//                   });
+//
+//            }
+//
+//
+//            return convertView;
+//        }
+
+        private String stringParceItem(Item item){
+            String toReturn = "";
+            if(!item.getOwner().equals("")){
+                toReturn = "Owner: " + item.getOwner();
+            }
+            toReturn = toReturn + "\nCategory " + item.getCategory().toString() + "\nInput Date: " + item.getInputDate().toString();
+            if(item.getExpirationDate() != null){
+                toReturn = toReturn + "Expiration Date " + item.getExpirationDate().toString();
+            }
+            return toReturn;
+        }
+
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
             ViewHolder holder;
 
             if (convertView == null) {
                 convertView = inf.inflate(R.layout.list_item_parent, parent, false);
-
+                Drawable d;
+                if(itemList.get(groupPosition).getQuantity() == Config.Quantity.LOW){
+                    d = getResources().getDrawable(R.drawable.yellow_horizontal_gradient);
+                }else if (itemList.get(groupPosition).getQuantity() == Config.Quantity.OUT){
+                    d = getResources().getDrawable(R.drawable.red_horizontal_gradient);
+                } else {
+                     d = getResources().getDrawable(R.drawable.green_horizontal_gradient);
+                }
+                convertView.setBackground(d);
                 holder = new ViewHolder();
                 holder.text = (TextView) convertView.findViewById(R.id.item_name);
                 convertView.setTag(holder);
+
+
             } else {
                 holder = (ViewHolder) convertView.getTag();
             }
